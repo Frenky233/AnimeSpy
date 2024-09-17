@@ -1,0 +1,41 @@
+@import "@styles/variables";
+
+.home {
+  height: 100%;
+  border: 2px solid $borderColor;
+  border-radius: 16px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px,
+    rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 16px 32px 32px;
+
+  &Title {
+    width: 100%;
+    text-align: center;
+    font-size: 50px;
+    font-weight: 700;
+    text-shadow: 2px 4px 3px rgba(0, 0, 0, 0.3);
+  }
+
+  &Inner {
+    display: flex;
+    flex-grow: 1;
+  }
+
+  &User {
+    margin: auto 0;
+  }
+
+  &Controls {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 3;
+    justify-content: space-between;
+  }
+
+  &Rules {
+    flex-grow: 2;
+  }
+}

@@ -1,0 +1,23 @@
+.userAvatar {
+  border-radius: 50%;
+  border: 2px solid #000000;
+  background-color: #ffffff;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+
+  &Image {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+  }
+
+  &Char {
+    font-size: 60px;
+    font-weight: 600;
+    pointer-events: none;
+  }
+}

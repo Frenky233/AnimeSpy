@@ -1,0 +1,35 @@
+@import "@styles/variables";
+
+.join {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  height: 112px;
+  position: relative;
+  justify-content: space-between;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 2px solid $borderColor;
+    border-radius: 8px;
+    z-index: -1;
+  }
+
+  &Input {
+    background-color: transparent;
+    height: 55px;
+  }
+
+  &Button {
+    height: 55px;
+    font-size: 32px;
+    font-weight: 600;
+    background-color: #4361ee !important;
+
+    &:hover {
+      background-color: #3f37c9 !important;
+    }
+  }
+}

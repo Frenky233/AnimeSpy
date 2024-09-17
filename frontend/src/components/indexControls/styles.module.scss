@@ -1,0 +1,31 @@
+@import "@styles/variables";
+
+.indexControls {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  justify-content: center;
+  align-items: center;
+
+  > button {
+    width: 35%;
+    height: 55px;
+    font-size: 32px;
+    font-weight: 600;
+    color: white;
+  }
+
+  &Create {
+    background-color: #edf2f4 !important;
+    color: $borderColor !important;
+
+    &:hover {
+      background-color: #ccd1d3 !important;
+    }
+  }
+
+  &Join {
+    width: 35%;
+    margin-block: 2px;
+  }
+}

@@ -1,0 +1,25 @@
+@import "@styles/variables";
+
+.input {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  position: relative;
+
+  input {
+    font-size: 16px;
+    height: 100%;
+    border: 2px solid $borderColor;
+    border-radius: 8px;
+    font-size: 32px;
+    font-weight: 550;
+    color: $borderColor;
+    padding-inline: 4px;
+    background-color: transparent;
+
+    &:focus,
+    &:active {
+      outline: none;
+    }
+  }
+}
