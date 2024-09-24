@@ -9,6 +9,7 @@
   button {
     font-size: 20px;
     font-weight: 600;
+    color: $borderColor;
   }
 
   &Inner {
@@ -36,9 +37,22 @@
 
   &Submit {
     background-color: #99d98c;
+    position: relative;
     @media screen and (min-width: 766px) {
       &:hover {
         background-color: #76c893;
+      }
+    }
+
+    &[data-loading="true"] {
+      pointer-events: none;
+
+      span {
+        opacity: 0;
+      }
+
+      div {
+        display: inline-block;
       }
     }
   }
@@ -55,5 +69,35 @@
     left: 50%;
     transform: translateX(-50%);
     white-space: pre;
+  }
+
+  &Loading {
+    position: absolute;
+    display: none;
+    width: 32px;
+    height: 32px;
+    color: $borderColor;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    &:after {
+      content: " ";
+      display: block;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 3.2px solid currentColor;
+      border-color: currentColor transparent currentColor transparent;
+      animation: loading 1.2s linear infinite;
+    }
+  }
+  @keyframes loading {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 }

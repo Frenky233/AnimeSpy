@@ -1,0 +1,51 @@
+@import "@styles/variables";
+
+.packs {
+  &Header {
+    display: flex;
+    gap: 4px;
+    height: 55px;
+  }
+
+  &SearchBar {
+    flex-grow: 3;
+
+    svg {
+      color: transparent;
+    }
+  }
+
+  &Return {
+    background-color: #edf2f4;
+    color: $borderColor;
+    border-width: 2px;
+    font-size: 32px;
+    font-weight: 600;
+    gap: 2px;
+
+    @media screen and (min-width: 766px) {
+      &:hover {
+        background-color: #ccd1d3;
+      }
+    }
+
+    &:active {
+      background-color: #ccd1d3;
+    }
+  }
+
+  &Create {
+    flex-grow: 1;
+    height: 55px;
+    font-size: 32px;
+    font-weight: 600;
+    color: $borderColor;
+    background-color: $buttonSecondaryColor;
+
+    @media screen and (min-width: 766px) {
+      &:hover {
+        background-color: $buttonSecondaryColorHover;
+      }
+    }
+  }
+}

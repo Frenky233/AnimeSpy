@@ -3,6 +3,7 @@ import styles from "./styles.module.scss";
 import clsx from "clsx";
 import { Button } from "../ui/button/component";
 import { JoinRoom } from "../joinRoom/component";
+import { LinkButton } from "../ui/linkButton/component";
 
 type Props = {
   className?: string;
@@ -15,7 +16,9 @@ export const IndexControls: FC<Props> = ({ className }) => {
         Создать
       </Button>
       <JoinRoom className={styles.indexControlsJoin} />
-      <Button variant="Primary">Наборы</Button>
+      <LinkButton to="packs" variant="Primary">
+        Наборы
+      </LinkButton>
     </div>
   );
 };

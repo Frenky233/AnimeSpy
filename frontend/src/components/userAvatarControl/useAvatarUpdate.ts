@@ -1,8 +1,9 @@
-import axios from "axios";
-import { useRef, useState } from "react";
+import { UserSetterContext } from "@/contexts/user";
+import axios, { AxiosHeaders } from "axios";
+import { useContext, useRef, useState } from "react";
 
 type imageResponse = {
-  data: string;
+  data: { id: string; deletehash: string };
   success: boolean;
   status: number;
 };
@@ -19,6 +20,7 @@ type Hook = (
   currentAvatar: string | undefined;
   fileInputRef: React.RefObject<HTMLInputElement>;
   errorMessageRef: React.RefObject<HTMLDivElement>;
+  submitButtonRef: React.RefObject<HTMLButtonElement>;
 };
 
 export const useAvatarUpdate: Hook = (onClose, initialImg) => {
@@ -27,6 +29,8 @@ export const useAvatarUpdate: Hook = (onClose, initialImg) => {
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
   const errorMessageRef = useRef<HTMLDivElement>(null);
+  const submitButtonRef = useRef<HTMLButtonElement>(null);
+  const { setUserAvatar } = useContext(UserSetterContext)!;
 
   const onStartUpload = () => {
     fileInputRef.current?.click();
@@ -65,42 +69,97 @@ export const useAvatarUpdate: Hook = (onClose, initialImg) => {
   const onSubmit = async () => {
     if (initialImg === currentAvatar) onClose();
 
-    const formData = new FormData();
-    formData.append("image", fileInputRef.current!.files![0]);
-    formData.append("type", "image");
-
-    try {
-      const response: imageResponse = await axios.post(
-        "https://api.imgur.com/3/image",
-        formData,
-        {
-          headers: {
-            Authorization: `Client-ID ${import.meta.env.IMGUR_CLIENT_ID}`,
-          },
-        }
+    submitButtonRef.current!.dataset.loading = "true";
+    if (!currentAvatar && initialImg)
+      await deleteAvatar(
+        localStorage.getItem("avatarDeleteHash") as string,
+        setUserAvatar
       );
-
-      console.log(response);
-
-      if (!response.success) {
-        console.log(response);
-        return;
-      }
-
-      localStorage.setItem("imageURL", response.data);
-    } catch (err) {
-      console.log(err);
+    else if (currentAvatar && !initialImg)
+      await uploadAvatar(fileInputRef.current!.files![0], setUserAvatar);
+    else if (currentAvatar && initialImg) {
+      await Promise.all([
+        deleteAvatar(
+          localStorage.getItem("avatarDeleteHash") as string,
+          setUserAvatar
+        ),
+        uploadAvatar(fileInputRef.current!.files![0], setUserAvatar),
+      ]);
     }
+    submitButtonRef.current!.removeAttribute("data-loading");
+
+    onClose();
   };
 
   return {
     currentAvatar,
     fileInputRef,
     errorMessageRef,
+    submitButtonRef,
     onStartUpload,
     onChange,
     onDelete,
     onCancel,
     onSubmit,
   };
+};
+
+const uploadAvatar = async (image: File, setLocal: (id: string) => void) => {
+  const headers = new AxiosHeaders();
+  headers.setAuthorization(`Client-ID ${import.meta.env.VITE_IMGUR_CLIENT_ID}`);
+
+  const formData = new FormData();
+  formData.append("image", image);
+  formData.append("type", "image");
+
+  try {
+    const response = await axios.post(
+      "https://api.imgur.com/3/image",
+      formData,
+      {
+        headers,
+      }
+    );
+
+    const result: imageResponse = response.data;
+
+    if (!result.success) {
+      console.log(response);
+      return;
+    }
+
+    localStorage.setItem("avatarID", result.data.id);
+    localStorage.setItem("avatarDeleteHash", result.data.deletehash);
+    setLocal(result.data.id);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const deleteAvatar = async (
+  deleteHash: string,
+  setLocal: (id: string) => void
+) => {
+  const headers = new AxiosHeaders();
+  headers.setAuthorization(`Client-ID ${import.meta.env.VITE_IMGUR_CLIENT_ID}`);
+
+  try {
+    const response = await axios.delete(
+      `https://api.imgur.com/3/image/${deleteHash}`,
+      { headers }
+    );
+
+    const result: imageResponse = await response.data;
+
+    if (!result.success) {
+      console.log(result);
+      return;
+    }
+
+    localStorage.removeItem("avatarID");
+    localStorage.removeItem("avatarDeleteHash");
+    setLocal("");
+  } catch (err) {
+    console.log(err);
+  }
 };

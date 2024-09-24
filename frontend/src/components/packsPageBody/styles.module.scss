@@ -1,0 +1,20 @@
+@import "@styles/variables";
+
+.packsBody {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 176px);
+  justify-content: center;
+  grid-gap: 16px;
+  position: relative;
+
+  &Empty {
+    position: absolute;
+    top: 150%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 50px;
+    color: $borderColor;
+    font-weight: 600;
+    opacity: 0.3;
+  }
+}

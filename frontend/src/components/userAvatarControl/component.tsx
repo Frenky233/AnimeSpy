@@ -19,6 +19,7 @@ export const UserAvatarControl: FC<Props> = ({
     currentAvatar,
     fileInputRef,
     errorMessageRef,
+    submitButtonRef,
     onStartUpload,
     onCancel,
     onChange,
@@ -61,8 +62,10 @@ export const UserAvatarControl: FC<Props> = ({
         variant="Push"
         className={styles.userAvatarControlSubmit}
         onClick={onSubmit}
+        forwardRef={submitButtonRef}
       >
-        Подтвердить
+        <span>Подтвердить</span>
+        <div className={styles.userAvatarControlLoading}></div>
       </Button>
       <div className={styles.userAvatarControlError} ref={errorMessageRef}>
         Максимальный размер файла 1МБ

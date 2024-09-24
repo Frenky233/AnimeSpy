@@ -1,0 +1,35 @@
+@import "@styles/variables";
+
+.error {
+  height: 100%;
+  border: 2px solid $borderColor;
+  border-radius: 16px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px,
+    rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
+  padding: 5%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  &Code {
+    font-size: 200px;
+    font-weight: 800;
+    color: $borderColor;
+  }
+
+  &Title {
+    color: $borderColor;
+    font-size: 60px;
+    font-weight: 600;
+  }
+
+  &Button {
+    font-size: 30px;
+    font-weight: 600;
+    color: #ffffff;
+
+    svg {
+      margin-right: 4px;
+    }
+  }
+}

@@ -1,0 +1,70 @@
+@import "@styles/variables";
+
+.packPreview {
+  border: 2px solid $borderColor;
+  border-radius: 8px;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.12);
+  background-color: #ffffff;
+
+  &Images {
+    display: grid;
+    grid-template-columns: 80px 80px;
+    grid-template-rows: 113px 113px;
+    margin: 0 auto;
+  }
+
+  &Title {
+    text-align: center;
+    font-size: 20px;
+    color: $borderColor;
+    font-weight: 600;
+    height: 23px;
+    overflow: hidden;
+  }
+}
+
+.loading {
+  padding: 0;
+  padding-bottom: 4px;
+  overflow: hidden;
+
+  .packPreviewImages,
+  .packPreviewTitle {
+    background-color: #ededed;
+    background: linear-gradient(
+        100deg,
+        rgba(255, 255, 255, 0) 40%,
+        rgba(255, 255, 255, 0.5) 50%,
+        rgba(255, 255, 255, 0) 60%
+      )
+      #ededed;
+    background-size: 200% 100%;
+    background-position-x: 180%;
+    animation: 1s loading ease-in-out infinite;
+  }
+
+  .packPreviewImages {
+    margin: 0;
+    display: block;
+    width: 100%;
+    height: 230px;
+  }
+
+  .packPreviewTitle {
+    width: 70%;
+    margin: 0 auto;
+    border-radius: 8px;
+    overflow: hidden;
+    animation-delay: 0.04s;
+  }
+}
+
+@keyframes loading {
+  to {
+    background-position-x: -20%;
+  }
+}

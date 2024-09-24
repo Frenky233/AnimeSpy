@@ -9,14 +9,22 @@
   font-family: "Inter", sans-serif;
 }
 
-html,
-body,
-#root {
+html {
   height: 100%;
+}
+body {
+  min-height: 100%;
+  display: flex;
+}
+
+#root {
+  flex-grow: 1;
 }
 
 body {
   background: linear-gradient(45deg, #8d99ae, #edf2f4);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 .container {
