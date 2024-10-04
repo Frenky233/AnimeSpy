@@ -11,8 +11,8 @@ export default function PacksPage({}) {
 
   useEffect(() => {
     const loadPacks = async () => {
-      await new Promise((r) => setTimeout(r, 200));
       const packs = await db.packs.toArray();
+      await new Promise((r) => setTimeout(r, 200));
       setPacks(packs);
       setIsLoading(false);
     };
@@ -27,7 +27,6 @@ export default function PacksPage({}) {
         onSearchQueryChange={(event: React.ChangeEvent<HTMLInputElement>) =>
           setSearchQuery(event.target.value)
         }
-        returnPath="/"
       />
       <PacksPageBody isLoading={isLoading} packs={packs} />
     </div>

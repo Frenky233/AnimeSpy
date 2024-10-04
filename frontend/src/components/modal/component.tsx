@@ -12,11 +12,9 @@ export const Modal: FC<Props> = ({ children, onClose }) => {
   return createPortal(
     <div className={styles.backdrop}>
       <div className={styles.modal}>
-        <div className={styles.modalTitle}>
-          <Button onClick={onClose} className={styles.modalExit}>
-            <Close />
-          </Button>
-        </div>
+        <Button onClick={onClose} className={styles.modalExit}>
+          <Close />
+        </Button>
         {children}
       </div>
     </div>,

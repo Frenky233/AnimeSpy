@@ -3,6 +3,7 @@ import styles from "./styles.module.scss";
 import { UserAvatar } from "../userAvatar/component";
 import { Button } from "../ui/button/component";
 import { useAvatarUpdate } from "./useAvatarUpdate";
+import { Popup } from "../popup/component";
 
 type Props = {
   onClose: () => void;
@@ -18,13 +19,14 @@ export const UserAvatarControl: FC<Props> = ({
   const {
     currentAvatar,
     fileInputRef,
-    errorMessageRef,
     submitButtonRef,
     onStartUpload,
     onCancel,
     onChange,
     onDelete,
     onSubmit,
+    showPopup,
+    terminate,
   } = useAvatarUpdate(onClose, initialImg);
 
   return (
@@ -54,7 +56,12 @@ export const UserAvatarControl: FC<Props> = ({
         >
           Отмена
         </Button>
-        <Button variant="Push" disabled={!initialImg} onClick={onDelete}>
+        <Button
+          variant="Push"
+          disabled={!initialImg}
+          onClick={onDelete}
+          className={styles.userAvatarControlDelete}
+        >
           Удалить
         </Button>
       </div>
@@ -67,9 +74,16 @@ export const UserAvatarControl: FC<Props> = ({
         <span>Подтвердить</span>
         <div className={styles.userAvatarControlLoading}></div>
       </Button>
-      <div className={styles.userAvatarControlError} ref={errorMessageRef}>
-        Максимальный размер файла 1МБ
-      </div>
+      {showPopup && (
+        <Popup
+          terminate={terminate}
+          variant="Error"
+          withProgressBar={true}
+          time={1500}
+        >
+          Максимальный размер файла 1 МБ
+        </Popup>
+      )}
     </div>
   );
 };

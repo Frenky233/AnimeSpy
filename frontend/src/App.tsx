@@ -22,6 +22,9 @@ const router = createBrowserRouter([
       {
         path: "packs",
         element: <PacksPage />,
+        loader: () => {
+          return null;
+        },
       },
       {
         path: "/packs/create",
@@ -31,7 +34,11 @@ const router = createBrowserRouter([
         path: "/packs/:packId",
         element: <PackPage />,
         loader: async ({ params }) => {
-          return await db.packs.get(params);
+          const pack = await db.packs
+            .where("id")
+            .equals(+params.packId!)
+            .toArray();
+          return pack[0];
         },
       },
     ],

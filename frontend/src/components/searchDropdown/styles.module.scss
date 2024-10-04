@@ -1,0 +1,14 @@
+@import "@styles/variables";
+
+.searchDropdown {
+  z-index: 999;
+  position: absolute;
+  top: calc(100% + 4px);
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  border: 2px solid $borderColor;
+  border-radius: 8px;
+  width: 100%;
+  overflow: hidden;
+}

@@ -1,0 +1,27 @@
+@import "@styles/variables";
+
+.settings {
+  font-size: 20px;
+  display: flex;
+  justify-content: space-between;
+
+  &Type {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &Toggler {
+    font-weight: 600;
+    color: $borderColor;
+  }
+
+  &Name {
+    input {
+      border: none;
+      border-bottom: 2px solid $borderColor;
+      border-radius: 0;
+    }
+  }
+}

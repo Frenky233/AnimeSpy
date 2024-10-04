@@ -19,16 +19,17 @@ type Hook = (
   onSubmit: () => Promise<void>;
   currentAvatar: string | undefined;
   fileInputRef: React.RefObject<HTMLInputElement>;
-  errorMessageRef: React.RefObject<HTMLDivElement>;
   submitButtonRef: React.RefObject<HTMLButtonElement>;
+  showPopup: boolean;
+  terminate: () => void;
 };
 
 export const useAvatarUpdate: Hook = (onClose, initialImg) => {
   const [currentAvatar, setCurrentAvatar] = useState<string | undefined>(
     initialImg
   );
+  const [showPopup, setShowPopup] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const errorMessageRef = useRef<HTMLDivElement>(null);
   const submitButtonRef = useRef<HTMLButtonElement>(null);
   const { setUserAvatar } = useContext(UserSetterContext)!;
 
@@ -36,17 +37,10 @@ export const useAvatarUpdate: Hook = (onClose, initialImg) => {
     fileInputRef.current?.click();
   };
 
-  const handleError = () => {
-    errorMessageRef.current!.style.opacity = "1";
-    setTimeout(function () {
-      errorMessageRef.current!.removeAttribute("style");
-    }, 4000);
-  };
-
   const onChange = () => {
     const avatar = fileInputRef.current!.files![0];
     if (avatar.size > 1048576) {
-      handleError();
+      setShowPopup(true);
       fileInputRef.current!.value = "";
       return;
     }
@@ -94,13 +88,14 @@ export const useAvatarUpdate: Hook = (onClose, initialImg) => {
   return {
     currentAvatar,
     fileInputRef,
-    errorMessageRef,
     submitButtonRef,
     onStartUpload,
     onChange,
     onDelete,
     onCancel,
     onSubmit,
+    showPopup,
+    terminate: () => setShowPopup(false),
   };
 };
 

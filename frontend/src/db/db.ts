@@ -1,15 +1,25 @@
 import Dexie, { Table } from "dexie";
 
-export type PackItems = Record<
-  string,
-  { name: string; url: string; posterUrl: string }
->;
+export type PackItem = {
+  id: string;
+  name: string;
+  url: string;
+  posterUrl: string;
+  poster2xUrl: string;
+  subInfo?: {
+    kind?: string;
+    status?: string;
+    genres?: string[];
+    year?: string;
+    studios?: string[];
+  };
+};
 
 export type Pack = {
   id?: number;
-  type: "Anime" | "Characters";
+  type: "anime" | "characters";
   name: string;
-  items: PackItems;
+  items: PackItem[];
 };
 
 export const db = new Dexie("AnimeSpyDatabase") as Dexie & {

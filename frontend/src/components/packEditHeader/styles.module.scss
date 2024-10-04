@@ -1,20 +1,10 @@
 @import "@styles/variables";
 
-.packs {
-  &Header {
-    display: flex;
-    gap: 4px;
-    height: 55px;
-  }
-
-  &SearchBar {
-    position: relative;
-    flex-grow: 3;
-
-    svg {
-      color: transparent;
-    }
-  }
+.header {
+  display: grid;
+  grid-template-columns: auto 1fr 250px;
+  gap: 4px;
+  height: 55px;
 
   &Return {
     background-color: #edf2f4;
@@ -35,9 +25,15 @@
     }
   }
 
-  &Create {
-    flex-grow: 1;
-    height: 55px;
+  &SearchBar {
+    position: relative;
+
+    svg {
+      color: transparent;
+    }
+  }
+
+  &Save {
     font-size: 32px;
     font-weight: 600;
     color: $borderColor;

@@ -1,0 +1,71 @@
+@import "@styles/variables";
+
+.info {
+  display: flex;
+  gap: 4px;
+  color: $borderColor;
+
+  &Title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+
+    h3 {
+      font-size: 30px;
+      text-wrap: nowrap;
+      font-weight: 750;
+    }
+  }
+
+  &List {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &Img {
+    border-radius: 8px;
+    border: 2px solid $borderColor;
+  }
+
+  &Url {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 16px;
+    padding: 4px;
+    transition: background-color ease-in-out 200ms;
+    font-size: 20px;
+
+    @media screen and (min-width: 766px) {
+      &:hover {
+        background-color: #cbcbcb;
+      }
+    }
+
+    &:active {
+      background-color: #cbcbcb;
+    }
+  }
+
+  &Item {
+    color: $borderColor;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: baseline;
+    gap: 4px;
+    font-size: 20px;
+
+    h6 {
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    ul {
+      list-style: none;
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 8px;
+    }
+  }
+}

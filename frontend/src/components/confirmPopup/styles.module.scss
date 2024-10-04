@@ -1,0 +1,50 @@
+@import "@styles/variables";
+
+.popup {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+
+  &Title {
+    color: $borderColor;
+    font-size: 30px;
+    font-weight: 600;
+  }
+
+  &Message {
+    color: $borderColor;
+    font-size: 24px;
+  }
+
+  &Buttons {
+    display: flex;
+    gap: 4px;
+
+    button {
+      font-size: 24px;
+      font-weight: 600;
+      width: 100px;
+    }
+  }
+
+  a {
+    text-decoration: none;
+  }
+}
+
+.variant {
+  &Error {
+    .popupButtons {
+      button:first-child {
+        background-color: $buttonErrorColor;
+        @media screen and (min-width: 766px) {
+          &:hover {
+            background-color: $buttonErrorColorHover;
+          }
+        }
+      }
+    }
+  }
+}

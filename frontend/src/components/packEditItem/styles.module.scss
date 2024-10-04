@@ -1,0 +1,84 @@
+@import "@styles/variables";
+
+.item {
+  border: 2px solid $borderColor;
+  border-radius: 8px;
+  overflow: hidden;
+  padding-bottom: 4px;
+  position: relative;
+  background-color: #ffffff;
+  max-height: 100%;
+
+  &Img {
+    width: 100%;
+    height: 250px;
+  }
+
+  &Bottom {
+    position: relative;
+    font-size: 20px;
+    font-weight: 500;
+    color: $borderColor;
+    text-align: center;
+  }
+
+  &Title {
+    color: $borderColor;
+    font-size: 20px;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    margin-inline: 4px;
+  }
+
+  &Control {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+  }
+
+  &Link,
+  &Info,
+  &Delete {
+    border-color: transparent;
+    padding: 0;
+    border-radius: 50%;
+    background-color: transparent;
+
+    svg {
+      width: 32px;
+      height: 32px;
+    }
+  }
+
+  &Delete {
+    @media screen and (min-width: 766px) {
+      &:hover {
+        background-color: rgba($buttonErrorColorHover, 0.7);
+      }
+    }
+
+    &:active {
+      background-color: rgba($buttonErrorColorHover, 0.7);
+    }
+  }
+
+  &Link,
+  &Info {
+    @media screen and (min-width: 766px) {
+      &:hover {
+        background-color: rgba(#868686, 0.7);
+      }
+    }
+
+    &:active {
+      background-color: rgba(#868686, 0.7);
+    }
+  }
+}

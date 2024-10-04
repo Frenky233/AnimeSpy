@@ -29,6 +29,15 @@
     }
   }
 
+  &Delete {
+    background-color: $buttonErrorColor;
+    @media screen and (min-width: 766px) {
+      &:hover {
+        background-color: $buttonErrorColor;
+      }
+    }
+  }
+
   &Input {
     opacity: 0;
     position: absolute;
@@ -69,6 +78,7 @@
     left: 50%;
     transform: translateX(-50%);
     white-space: pre;
+    pointer-events: none;
   }
 
   &Loading {

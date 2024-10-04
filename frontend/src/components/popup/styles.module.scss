@@ -1,0 +1,100 @@
+@import "@styles/variables";
+
+@mixin popupVariant($borderColor, $bgColor) {
+  border-color: $bgColor;
+
+  .popupProgressBar {
+    background: linear-gradient(90deg, $borderColor, $bgColor);
+  }
+}
+
+.popup {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #ffffff;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  padding-top: 32px;
+  animation: init 200ms linear;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
+    rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
+    rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+
+  &Wrapper {
+    position: absolute;
+    height: 16px;
+    left: 0;
+    top: 0;
+    z-index: 999;
+    width: 100%;
+    background-color: transparent;
+    border-bottom: 1px solid rgba($borderColor, 0.2);
+  }
+
+  &ProgressBar {
+    transition: width 0.1s linear;
+    height: 100%;
+    z-index: 999;
+  }
+
+  &Message {
+    font-size: 24px;
+    color: $borderColor;
+    font-weight: 600;
+    white-space: pre-line;
+  }
+}
+
+.variant {
+  &Info {
+    @include popupVariant($borderColor, #ffffff);
+  }
+
+  &Error {
+    @include popupVariant($buttonErrorColor, $buttonErrorColorHover);
+    animation: shake 200ms linear;
+  }
+
+  &Success {
+    @include popupVariant($buttonSecondaryColor, $buttonSecondaryColorHover);
+  }
+}
+
+@keyframes init {
+  0% {
+    top: 32px;
+    opacity: 0.3;
+  }
+  100% {
+    top: 16px;
+    opacity: 1;
+  }
+}
+
+@keyframes shake {
+  0% {
+    transform: translateX(calc(-50% - 5px));
+    opacity: 0.3;
+  }
+  25% {
+    transform: translateX(calc(-50% + 5px));
+    opacity: 0.5;
+  }
+
+  75% {
+    transform: translateX(calc(-50% - 5px));
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: translateX(-50%);
+    opacity: 1;
+  }
+}
