@@ -1,6 +1,8 @@
+@import "@styles/variables";
+
 .userAvatar {
   border-radius: 50%;
-  border: 2px solid #000000;
+  border: 2px solid $borderColor;
   background-color: #ffffff;
   width: 100px;
   height: 100px;
@@ -12,7 +14,10 @@
   &Image {
     height: 100%;
     width: 100%;
-    object-fit: cover;
+
+    img {
+      object-fit: cover;
+    }
   }
 
   &Char {

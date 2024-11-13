@@ -61,7 +61,10 @@ export const useAvatarUpdate: Hook = (onClose, initialImg) => {
   };
 
   const onSubmit = async () => {
-    if (initialImg === currentAvatar) onClose();
+    if (initialImg === currentAvatar) {
+      onClose();
+      return;
+    }
 
     submitButtonRef.current!.dataset.loading = "true";
     if (!currentAvatar && initialImg)

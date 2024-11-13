@@ -1,0 +1,23 @@
+@import "@styles/variables";
+
+.player {
+  display: flex;
+  height: 75px;
+  align-items: center;
+  gap: 4px;
+  border: 2px solid $borderColor;
+  border-radius: 8px;
+  background-color: #edf2f4;
+
+  &Name {
+    font-size: 24px;
+    font-weight: 500;
+    color: $borderColor;
+  }
+
+  &Avatar {
+    height: 72px;
+    width: 72px;
+    border-width: 1px;
+  }
+}

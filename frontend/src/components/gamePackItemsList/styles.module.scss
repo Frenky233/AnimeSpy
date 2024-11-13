@@ -1,0 +1,24 @@
+@import "@styles/variables";
+
+.packs {
+  width: 100%;
+  overflow-y: auto;
+
+  &Title {
+    text-align: center;
+    font-size: 32px;
+    font-weight: 600;
+    border-bottom: 1px solid $borderColor;
+    margin-bottom: 4px;
+    color: $borderColor;
+  }
+
+  &List {
+    margin-left: 8px;
+    grid-template-columns: repeat(5, 1fr);
+
+    h4 {
+      font-size: 16px;
+    }
+  }
+}

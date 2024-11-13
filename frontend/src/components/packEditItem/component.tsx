@@ -7,10 +7,11 @@ import InfoIcon from "@/assets/images/infoIcon.svg?react";
 import { PackItem } from "@/db/db";
 import { Modal } from "../modal/component";
 import { PackItemInfo } from "../packItemInfo/component,";
+import { SuspenseImage } from "../ui/suspenseImage/component";
 
 type Props = {
   item: PackItem;
-  onDeleteItem: (id: string) => void;
+  onDeleteItem?: (id: string) => void;
 };
 
 export const PackEditItem: FC<Props> = ({ item, onDeleteItem }) => {
@@ -27,11 +28,11 @@ export const PackEditItem: FC<Props> = ({ item, onDeleteItem }) => {
   return (
     <>
       <div className={styles.item}>
-        <img
-          className={styles.itemImg}
+        <SuspenseImage
           src={item.posterUrl}
           srcSet={`${item.poster2xUrl} 2x`}
-          alt="item poster"
+          className={styles.itemImg}
+          alt="poster img"
         />
         <div className={styles.itemBottom}>
           <h4 className={styles.itemTitle} title={item.name}>
@@ -48,12 +49,14 @@ export const PackEditItem: FC<Props> = ({ item, onDeleteItem }) => {
           >
             <LinkIcon />
           </Button>
-          <Button
-            onClick={() => onDeleteItem(item.id)}
-            className={styles.itemDelete}
-          >
-            <DeleteIcon />
-          </Button>
+          {onDeleteItem && (
+            <Button
+              onClick={() => onDeleteItem(item.id)}
+              className={styles.itemDelete}
+            >
+              <DeleteIcon />
+            </Button>
+          )}
         </aside>
       </div>
       {showInfoModal && (

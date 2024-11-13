@@ -1,20 +1,14 @@
 import { Hono } from "hono";
 import { logger } from "hono/logger";
-import searchRoute from "./routes/search";
-import { cors } from "hono/cors";
+import searchRoute from "./routes/search/search";
+import ioMiddleware from "./routes/game/game";
+import type { Env } from "./type";
 
-const app = new Hono();
+const app = new Hono<Env>();
 
 app.use("*", logger());
-app.use(
-  "/api/*",
-  cors({
-    origin: "http://localhost:3000",
-    allowMethods: ["POST", "GET"],
-    maxAge: 600,
-  })
-);
+app.use(ioMiddleware);
 
-app.route("/api/search", searchRoute);
+const apiRoutes = app.basePath("/api").route("/search", searchRoute);
 
 export default app;

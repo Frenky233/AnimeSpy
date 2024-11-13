@@ -3,7 +3,7 @@ import styles from "./styles.module.scss";
 import clsx from "clsx";
 
 type Props = PropsWithChildren<{
-  className?: string;
+  className?: string | string[];
   disabled?: HTMLButtonElement["disabled"];
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   type?: HTMLButtonElement["type"];

@@ -12,9 +12,13 @@ type Props = {
 export const IndexControls: FC<Props> = ({ className }) => {
   return (
     <div className={clsx(styles.indexControls, className)}>
-      <Button variant="Push" className={styles.indexControlsCreate}>
+      <LinkButton
+        to="/game"
+        variant="Push"
+        className={styles.indexControlsCreate}
+      >
         Создать
-      </Button>
+      </LinkButton>
       <JoinRoom className={styles.indexControlsJoin} />
       <LinkButton to="packs" variant="Primary">
         Наборы

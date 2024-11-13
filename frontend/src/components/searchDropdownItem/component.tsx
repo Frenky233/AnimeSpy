@@ -4,6 +4,7 @@ import { Button } from "../ui/button/component";
 import Close from "@/assets/images/closeIcon.svg?react";
 import { PackItem } from "@/db/db";
 import LinkIcon from "@/assets/images/linkIcon.svg?react";
+import { SuspenseImage } from "../ui/suspenseImage/component";
 
 type Props = {
   item: PackItem;
@@ -13,7 +14,11 @@ type Props = {
 export const SearchDropdownItem: FC<Props> = ({ item, onAddItem }) => {
   return (
     <div className={styles.item}>
-      <img src={item.posterUrl} alt="" className={styles.itemPreview} />
+      <SuspenseImage
+        src={item.posterUrl}
+        alt=""
+        className={styles.itemPreview}
+      />
       <div className={styles.itemData}>
         <div className={styles.itemTitle}>
           <h4 className={styles.itemName} title={item.name}>

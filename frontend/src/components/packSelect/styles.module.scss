@@ -1,0 +1,40 @@
+@import "@styles/variables";
+
+.select {
+  &Title {
+    font-size: 32px;
+    font-weight: 600;
+    color: $borderColor;
+    text-align: center;
+  }
+
+  &Packs {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-gap: 16px;
+    position: relative;
+  }
+
+  &Button {
+    border: none;
+    cursor: pointer;
+    background-color: transparent;
+
+    > div {
+      transition: border-color 200ms ease-in-out;
+    }
+    @media screen and (min-width: 766px) {
+      &:hover {
+        > div {
+          border-color: $buttonSecondaryColorHover;
+        }
+      }
+    }
+
+    &:active {
+      > div {
+        border-color: $buttonSecondaryColorHover;
+      }
+    }
+  }
+}

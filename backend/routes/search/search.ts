@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import type { AnimeResponse, CharacterResponse, Response } from "./type";
+import "dotenv/config";
 
 export const statusRus = {
   anons: "Анонс",
@@ -23,10 +24,10 @@ const searchRoute = new Hono().get("/:type/:query", async (c) => {
   const { type, query } = c.req.param();
 
   const headers = new Headers();
-  headers.append("User-Agent", Bun.env.SHIKIMORI_CLIENT_ID!);
+  headers.append("User-Agent", process.env.SHIKIMORI_CLIENT_ID!);
   headers.append("Content-Type", "application/json");
 
-  const response = await fetch(Bun.env.SHIKIMORI_API_URL!, {
+  const response = await fetch(process.env.SHIKIMORI_API_URL!, {
     method: "POST",
     headers: headers,
     body: JSON.stringify({
@@ -41,8 +42,6 @@ const searchRoute = new Hono().get("/:type/:query", async (c) => {
 
   return c.json(data);
 });
-
-export default searchRoute;
 
 const animeQuery = `query($search: String!){
         animes(search: $search, limit: 3) {
@@ -77,8 +76,8 @@ const parseData = (data: Response, type: "anime" | "characters") => {
           url: anime.url,
           posterUrl: anime.poster.mainUrl,
           poster2xUrl: anime.poster.main2xUrl,
-          year: String(anime.airedOn.year) || null,
           subInfo: {
+            year: String(anime.airedOn.year) || null,
             kind: kindRus[anime.kind],
             status: statusRus[anime.status],
             genres: anime.genres?.map(({ russian }) => russian) || null,
@@ -94,3 +93,5 @@ const parseData = (data: Response, type: "anime" | "characters") => {
         }));
   return result;
 };
+
+export default searchRoute;

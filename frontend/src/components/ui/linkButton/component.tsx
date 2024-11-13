@@ -7,9 +7,16 @@ type Props = PropsWithChildren<{
   to: string;
   className?: string;
   variant?: "Primary" | "Secondary" | "Push";
+  disabled?: boolean;
 }>;
 
-export const LinkButton: FC<Props> = ({ children, to, className, variant }) => {
+export const LinkButton: FC<Props> = ({
+  children,
+  to,
+  className,
+  variant,
+  disabled,
+}) => {
   return (
     <Link
       to={to}
@@ -18,6 +25,7 @@ export const LinkButton: FC<Props> = ({ children, to, className, variant }) => {
         className,
         styles[`variant${variant}`]
       )}
+      aria-disabled={disabled}
     >
       {children}
     </Link>

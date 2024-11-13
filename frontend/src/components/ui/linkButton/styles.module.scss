@@ -21,6 +21,12 @@
   text-decoration: none;
   transition: background-color linear 0.2s, border-color linear 0.2s;
   color: black;
+
+  &[aria-disabled="true"] {
+    cursor: default;
+    opacity: 0.5;
+    pointer-events: none;
+  }
 }
 
 .variant {

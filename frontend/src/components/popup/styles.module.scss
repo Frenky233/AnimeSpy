@@ -59,7 +59,9 @@
 
   &Error {
     @include popupVariant($buttonErrorColor, $buttonErrorColorHover);
-    animation: shake 200ms linear;
+    & {
+      animation: shake 200ms linear;
+    }
   }
 
   &Success {

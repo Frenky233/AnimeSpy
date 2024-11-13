@@ -3,6 +3,7 @@ import styles from "./styles.module.scss";
 import { PackPreviewLoading } from "../packPreview/loading";
 import { Pack } from "@/db/db";
 import { PackPreview } from "../packPreview/component";
+import { Link } from "react-router-dom";
 
 type Props = {
   isLoading: boolean;
@@ -18,14 +19,14 @@ export const PacksPageBody: FC<Props> = ({ isLoading, packs }) => {
         <div className={styles.packsBodyEmpty}>Наборы не найдены</div>
       ) : (
         packs?.map((pack) => (
-          <PackPreview
-            key={pack.id!}
-            id={pack.id!}
-            title={pack.name}
-            imagesPreview={Object.entries(pack.items)
-              .slice(0, 4)
-              .map(([_id, { posterUrl }]) => posterUrl)}
-          />
+          <Link to={`/packs/${pack.id}`} key={pack.id!}>
+            <PackPreview
+              title={pack.name}
+              imagesPreview={Object.entries(pack.items)
+                .slice(0, 4)
+                .map(([_id, { posterUrl }]) => posterUrl)}
+            />
+          </Link>
         ))
       )}
     </div>

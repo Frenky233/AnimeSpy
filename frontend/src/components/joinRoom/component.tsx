@@ -1,9 +1,9 @@
 import { FC } from "react";
 import styles from "./styles.module.scss";
 import clsx from "clsx";
-import { Button } from "../ui/button/component";
 import { Input } from "../ui/input/component";
 import { useJoin } from "./useJoin";
+import { LinkButton } from "../ui/linkButton/component";
 
 type Props = {
   className?: string;
@@ -21,13 +21,14 @@ export const JoinRoom: FC<Props> = ({ className }) => {
         className={styles.joinInput}
         placeholder="Код"
       />
-      <Button
+      <LinkButton
+        to={`/game/${value}`}
         variant="Push"
         className={styles.joinButton}
         disabled={value.length < 5}
       >
         Войти
-      </Button>
+      </LinkButton>
     </div>
   );
 };

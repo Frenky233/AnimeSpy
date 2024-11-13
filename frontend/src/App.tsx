@@ -8,6 +8,7 @@ import { UserContext, UserSetterContext } from "./contexts/user";
 import PackPage from "./pages/pack/pack";
 import ErrorPage from "./pages/error/error";
 import { db } from "./db/db";
+import GamePage from "./pages/game/game";
 
 const router = createBrowserRouter([
   {
@@ -40,6 +41,14 @@ const router = createBrowserRouter([
             .toArray();
           return pack[0];
         },
+      },
+      {
+        path: "/game/:id",
+        element: <GamePage />,
+      },
+      {
+        path: "/game",
+        element: <GamePage />,
       },
     ],
   },

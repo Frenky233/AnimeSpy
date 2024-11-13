@@ -2,11 +2,10 @@ import { FC, PropsWithChildren, useEffect, useRef } from "react";
 import styles from "./styles.module.scss";
 import { createPortal } from "react-dom";
 import clsx from "clsx";
-import { RefObject } from "hono/jsx";
 
 type Props = PropsWithChildren<{
   variant: "Info" | "Error" | "Success";
-  terminate: () => void;
+  terminate?: () => void;
   withProgressBar: boolean;
   className?: string;
   time?: number;
@@ -23,20 +22,23 @@ export const Popup: FC<Props> = ({
   const progressBarRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (variant === "Info") return;
+
+    const timer = setTimeout(terminate!, time + 200);
+
     if (!withProgressBar) return;
 
     const interval = startProgressBar(time, progressBarRef);
-    const timer = setTimeout(terminate, time + 200);
 
     return () => {
       clearTimeout(timer);
       clearInterval(interval);
     };
-  }, []);
+  }, [children]);
 
   const startProgressBar = (
     initialTime: number,
-    ref: RefObject<HTMLDivElement>
+    ref: React.RefObject<HTMLDivElement>
   ) => {
     let timeLeft = initialTime;
     let interval: number = Infinity;
@@ -57,7 +59,7 @@ export const Popup: FC<Props> = ({
     };
 
     const start = () => {
-      interval = setInterval(tick, 100);
+      interval = window.setInterval(tick, 100);
       render();
     };
 

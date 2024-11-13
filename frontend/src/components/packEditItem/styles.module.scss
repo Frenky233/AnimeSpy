@@ -8,10 +8,12 @@
   position: relative;
   background-color: #ffffff;
   max-height: 100%;
+  display: flex;
+  flex-direction: column;
 
   &Img {
     width: 100%;
-    height: 250px;
+    height: 100%;
   }
 
   &Bottom {

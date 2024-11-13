@@ -176,20 +176,20 @@ export const usePackEdit: Hook = () => {
     });
   }, [pack.type, pack.items.length]);
 
-  const onAddItem = useCallback((item: PackItem) => {
+  const onAddItem = (item: PackItem) => {
     if (!pack.items.find(({ id }) => id === item.id))
       dispatch({ type: "addItem", payload: item });
     setSearchQuery("");
-  }, []);
+  };
 
   const onDeleteItem = useCallback((id: string) => {
     dispatch({ type: "deleteItem", payload: id });
   }, []);
 
   const onSubmit = async () => {
-    if (!pack.name || pack.items.length < 30) {
+    if (!pack.name.trim() || pack.items.length < 30) {
       const messageAr: string[] = [];
-      if (!pack.name) messageAr.push("Название не может быть пустым");
+      if (!pack.name.trim()) messageAr.push("Название не может быть пустым");
       if (pack.items.length < 30)
         messageAr.push("Минимальное количество карточек: 30");
 
@@ -280,7 +280,7 @@ export const usePackEdit: Hook = () => {
 
 const getData = async (search: string, type: typeof INITIAL_STATE.type) => {
   const data: AxiosResponse<PackItem[]> = await axios.get(
-    `http://localhost:5000/api/search/${type}/${search}`
+    `/api/search/${type}/${search}`
   );
 
   return data.data;

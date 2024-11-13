@@ -1,0 +1,51 @@
+@import "@styles/variables";
+
+.game {
+  &Header {
+    height: 55px;
+    display: flex;
+    margin-bottom: 4px;
+    gap: 4px;
+  }
+
+  &Body {
+    display: grid;
+    grid-template-columns: 275px 1fr;
+  }
+
+  &Code {
+    background-color: #edf2f4;
+    color: $borderColor;
+    font-size: 32px;
+    font-weight: 600;
+    border: 2px solid $borderColor;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px;
+  }
+
+  &Pause {
+    padding-top: 16px;
+  }
+
+  &Button {
+    background-color: #edf2f4;
+    color: $borderColor;
+    border-width: 2px;
+    font-size: 32px;
+    font-weight: 600;
+    gap: 2px;
+
+    @media screen and (min-width: 766px) {
+      &:hover {
+        background-color: #ccd1d3;
+      }
+    }
+
+    &:active {
+      background-color: #ccd1d3;
+    }
+  }
+}
