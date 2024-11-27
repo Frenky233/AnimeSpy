@@ -1,9 +1,8 @@
 @import "@styles/variables";
 
-.adminControls {
+.userControls {
   display: flex;
   gap: 4px;
-  height: 55px;
 
   &Button {
     background-color: #edf2f4;

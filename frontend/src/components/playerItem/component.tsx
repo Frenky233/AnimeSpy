@@ -1,6 +1,7 @@
 import { FC } from "react";
 import styles from "./styles.module.scss";
 import { UserAvatar } from "../userAvatar/component";
+import clsx from "clsx";
 
 type Props = {
   player: {
@@ -13,13 +14,15 @@ type Props = {
 
 export const PlayerItem: FC<Props> = ({ player }) => {
   return (
-    <div className={styles.player}>
+    <div className={clsx(styles.player, !player.isOnline && styles.offline)}>
       <UserAvatar
         iconURL={player.avatar !== "null" ? player.avatar : undefined}
         iconChar={player.name.charAt(0)}
         className={styles.playerAvatar}
       />
-      <div className={styles.playerName}>{player.name}</div>
+      <div className={styles.playerName} title={player.name}>
+        {player.name}
+      </div>
     </div>
   );
 };

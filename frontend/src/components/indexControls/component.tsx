@@ -1,7 +1,6 @@
 import { FC } from "react";
 import styles from "./styles.module.scss";
 import clsx from "clsx";
-import { Button } from "../ui/button/component";
 import { JoinRoom } from "../joinRoom/component";
 import { LinkButton } from "../ui/linkButton/component";
 

@@ -1,0 +1,104 @@
+@import "@styles/variables";
+
+.card {
+  height: 100%;
+  z-index: 2;
+  position: relative;
+
+  svg {
+    width: 32px;
+    height: 32px;
+    color: $borderColor;
+  }
+
+  &Title {
+    background-color: #edf2f4;
+    color: $borderColor;
+    border-color: $borderColor;
+    border-width: 2px;
+    gap: 2px;
+    width: 100%;
+    height: 100%;
+
+    h5 {
+      font-size: 32px;
+      font-weight: 600;
+    }
+
+    @media screen and (min-width: 766px) {
+      &:hover {
+        background-color: #ccd1d3;
+      }
+    }
+
+    &:active {
+      background-color: #ccd1d3;
+    }
+  }
+
+  &Data {
+    position: absolute;
+    top: calc(100% - 2px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-height: none;
+    overflow: hidden;
+  }
+
+  &Spy {
+    border: 2px solid $borderColor;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+  }
+
+  &Upper {
+    width: 100%;
+    height: 130px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url(https://i.pinimg.com/736x/d0/b2/1b/d0b21b3ccde6a3f7848dbc4319f7095d.jpg);
+    background-size: cover;
+    background-position-y: 50%;
+
+    h6 {
+      font-size: 36px;
+      color: #ffffff;
+      font-weight: 600;
+    }
+  }
+
+  &Vote {
+    background-color: $buttonErrorColor;
+    border: none;
+    border-radius: 6px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-top: 2px solid $borderColor;
+    font-size: 32px;
+    font-weight: 600;
+
+    @media screen and (min-width: 766px) {
+      &:hover {
+        background-color: $buttonErrorColorHover;
+      }
+    }
+
+    &:active {
+      background-color: $buttonErrorColorHover;
+    }
+  }
+}
+
+.open {
+  height: 100%;
+
+  > button > svg {
+    transform: rotate(180deg);
+  }
+}

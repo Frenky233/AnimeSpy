@@ -8,13 +8,15 @@ import { PackItem } from "@/db/db";
 import { Modal } from "../modal/component";
 import { PackItemInfo } from "../packItemInfo/component,";
 import { SuspenseImage } from "../ui/suspenseImage/component";
+import clsx from "clsx";
 
 type Props = {
   item: PackItem;
   onDeleteItem?: (id: string) => void;
+  className?: string;
 };
 
-export const PackEditItem: FC<Props> = ({ item, onDeleteItem }) => {
+export const PackEditItem: FC<Props> = ({ item, onDeleteItem, className }) => {
   const [showInfoModal, setShowInfoModal] = useState<boolean>(false);
 
   const onOpen = () => {
@@ -27,7 +29,7 @@ export const PackEditItem: FC<Props> = ({ item, onDeleteItem }) => {
 
   return (
     <>
-      <div className={styles.item}>
+      <div className={clsx(styles.item, className)}>
         <SuspenseImage
           src={item.posterUrl}
           srcSet={`${item.poster2xUrl} 2x`}

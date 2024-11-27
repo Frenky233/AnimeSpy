@@ -2,9 +2,15 @@
 
 .game {
   &Header {
-    height: 55px;
     display: flex;
     margin-bottom: 4px;
+    gap: 4px;
+    flex-direction: column;
+  }
+
+  &ButtonsRow {
+    height: 55px;
+    display: flex;
     gap: 4px;
   }
 

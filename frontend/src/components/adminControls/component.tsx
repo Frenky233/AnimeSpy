@@ -12,6 +12,7 @@ type Props = {
   onGameResume: () => void;
   isGameInProgress: boolean;
   isPaused: boolean;
+  isPackSet: boolean;
 };
 
 export const AdminControls: FC<Props> = ({
@@ -22,6 +23,7 @@ export const AdminControls: FC<Props> = ({
   onGameResume,
   isGameInProgress,
   isPaused,
+  isPackSet,
 }) => {
   return (
     <div className={styles.adminControls}>
@@ -29,6 +31,7 @@ export const AdminControls: FC<Props> = ({
         onClick={onSelectPack}
         className={styles.adminControlsButton}
         variant="Primary"
+        disabled={isGameInProgress}
       >
         Выбрать набор
       </Button>
@@ -36,6 +39,7 @@ export const AdminControls: FC<Props> = ({
         onClick={isGameInProgress ? onGameAbort : onGameStart}
         className={styles.adminControlsButton}
         variant="Primary"
+        disabled={!isPackSet}
       >
         {isGameInProgress ? "Отмена" : "Начать"}
       </Button>

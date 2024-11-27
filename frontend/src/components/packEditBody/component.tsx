@@ -19,7 +19,11 @@ export const PackEditBody: FC<Props> = ({
 }) => {
   return (
     <div className={styles.body}>
-      <PackEditItemsList items={items} onDeleteItem={onDeleteItem} />
+      <PackEditItemsList
+        items={items}
+        onDeleteItem={onDeleteItem}
+        className={styles.bodyList}
+      />
       <PackEditSideInfo onDeletePack={onDeletePack} onCancel={onCancel} />
     </div>
   );

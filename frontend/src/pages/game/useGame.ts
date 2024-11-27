@@ -1,5 +1,6 @@
 import { UserContext } from "@/contexts/user";
-import { Pack } from "@/db/db";
+import { Pack, PackItem } from "@/db/db";
+import { getCook } from "@/utils/getCook";
 import { useContext, useEffect, useReducer, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { io, Socket } from "socket.io-client";
@@ -15,12 +16,16 @@ type State = {
   id: string;
   users: User[];
   pack: Pack | null;
+  card: PackItem | null;
+  isSpy: boolean;
 };
 
 type Hook = () => {
   users: User[];
   pack: Pack | null;
   id: string;
+  isSpy: boolean;
+  card: PackItem | null;
   isAdmin: boolean;
   isGameInProgress: boolean;
   isPaused: boolean;
@@ -29,6 +34,8 @@ type Hook = () => {
   onAbort: () => void;
   onPause: () => void;
   onResume: () => void;
+  time: number;
+  setTime: (time: number) => void;
 };
 
 type Action =
@@ -37,26 +44,36 @@ type Action =
       payload: State;
     }
   | {
-      type: "addUser";
+      type: "addUser" | "reconnectUser" | "disconnectUser";
       payload: User;
     }
   | {
-      type: "deleteUser";
-      payload: string;
+      type: "updateUsers";
+      payload: User[];
     }
   | {
-      type: "setId";
+      type: "deleteUser" | "setId";
       payload: string;
     }
   | {
       type: "setPack";
       payload: Pack;
+    }
+  | {
+      type: "setCard";
+      payload: PackItem | null;
+    }
+  | {
+      type: "setIsSpy";
+      payload: boolean;
     };
 
 const INITIAL_STATE: State = {
   id: "",
   users: [],
   pack: null,
+  isSpy: false,
+  card: null,
 };
 
 const reducer = (state: State, { type, payload }: Action): State => {
@@ -80,7 +97,31 @@ const reducer = (state: State, { type, payload }: Action): State => {
     case "deleteUser":
       return {
         ...state,
-        users: state.users.filter((user) => user.id !== payload),
+        users: state.users.filter(({ id }) => id !== payload),
+      };
+    case "reconnectUser":
+    case "disconnectUser":
+      state.users[
+        state.users.findIndex(({ id }) => id === payload.id)
+      ].isOnline = payload.isOnline;
+
+      return {
+        ...state,
+      };
+    case "updateUsers":
+      return {
+        ...state,
+        users: payload,
+      };
+    case "setCard":
+      return {
+        ...state,
+        card: payload,
+      };
+    case "setIsSpy":
+      return {
+        ...state,
+        isSpy: payload,
       };
     default: {
       return state;
@@ -97,14 +138,21 @@ export const useGame: Hook = () => {
   const [isGameInProgress, setIsGameInProgress] = useState<boolean>(false);
   const [isPaused, setIsPaused] = useState<boolean>(false);
   const [socket, setSocket] = useState<Socket | null>(null);
+  const [userId, setUserId] = useState<string>("");
+  const [timeLeft, setTimeLeft] = useState<number>(600);
 
   useEffect(() => {
+    const userId = getCook("userId");
+
+    if (userId) setUserId(userId);
+
     const socket = io({
       path: "/api/ws",
       query: {
         name: name ? name : "МЕССИ10",
         avatar: avatarID ? `https://i.imgur.com/${avatarID}.png` : null,
-        roomId: params.id,
+        roomId: params.id?.toUpperCase(),
+        userId: userId,
       },
     });
 
@@ -118,6 +166,8 @@ export const useGame: Hook = () => {
     socket.on("gameAborted", abortGame);
     socket.on("gamePaused", pauseGame);
     socket.on("gameResumed", resumeGame);
+    socket.on("userReconnected", userReconnected);
+    socket.on("userLostConnection", userLostConnection);
 
     const disconnectFromSocket = () => {
       socket.off("joinRoom", joinRoom);
@@ -125,6 +175,11 @@ export const useGame: Hook = () => {
       socket.off("userDisconnected", userDisconnected);
       socket.off("setPack", setPack);
       socket.off("gameStarted", startGame);
+      socket.off("gameAborted", abortGame);
+      socket.off("gamePaused", pauseGame);
+      socket.off("gameResumed", resumeGame);
+      socket.off("userReconnected", userReconnected);
+      socket.off("userLostConnection", userLostConnection);
 
       socket.close();
     };
@@ -145,8 +200,16 @@ export const useGame: Hook = () => {
     isAdmin: boolean;
     isGameInProgress: boolean;
     isPaused: boolean;
+    isReconnect: boolean;
+    timeLeft: number;
+    isSpy: boolean;
+    card: PackItem | null;
   }) => {
-    document.cookie = `userId=${args.userId}; max-age=86400; path=/;`;
+    if (!args.isReconnect) {
+      document.cookie = `userId=${args.userId}; max-age=86400; path=/;`;
+
+      setUserId(args.userId);
+    }
 
     navigate(`/game/${args.roomId}`, {
       replace: true,
@@ -158,11 +221,14 @@ export const useGame: Hook = () => {
         id: args.roomId,
         users: args.users,
         pack: args.pack,
+        card: args.card,
+        isSpy: args.isSpy,
       },
     });
     setIsAdmin(args.isAdmin);
     setIsGameInProgress(args.isGameInProgress);
     setIsPaused(args.isPaused);
+    setTimeLeft(args.timeLeft);
   };
 
   const userJoined = (args: User) => {
@@ -178,6 +244,8 @@ export const useGame: Hook = () => {
   };
 
   const onSelect = (pack: Pack) => {
+    if (isGameInProgress) return;
+
     socket?.emit(
       "setPack",
       {
@@ -185,33 +253,42 @@ export const useGame: Hook = () => {
         items: pack.items,
         type: pack.type,
       },
-      game.id
+      game.id,
+      userId
     );
   };
 
   const onStart = () => {
-    socket?.emit("startGame", game.id);
+    if (!game.pack) return;
+
+    socket?.emit("startGame", game.id, userId);
   };
 
   const onAbort = () => {
-    socket?.emit("abortGame", game.id);
+    socket?.emit("abortGame", game.id, userId);
   };
 
   const onPause = () => {
-    socket?.emit("pauseGame", game.id);
+    socket?.emit("pauseGame", game.id, userId);
   };
 
   const onResume = () => {
-    socket?.emit("resumeGame", game.id);
+    socket?.emit("resumeGame", game.id, userId);
   };
 
-  const startGame = () => {
+  const startGame = (args: { isSpy: boolean; card: PackItem }) => {
     setIsGameInProgress(true);
+
+    dispatch({ type: "setIsSpy", payload: args.isSpy });
+    dispatch({ type: "setCard", payload: args.card });
   };
 
-  const abortGame = () => {
+  const abortGame = (users: User[]) => {
     setIsGameInProgress(false);
     setIsPaused(false);
+    dispatch({ type: "updateUsers", payload: users });
+
+    setTimeLeft(600);
   };
 
   const pauseGame = () => {
@@ -220,6 +297,18 @@ export const useGame: Hook = () => {
 
   const resumeGame = () => {
     setIsPaused(false);
+  };
+
+  const userReconnected = (user: User) => {
+    dispatch({ type: "reconnectUser", payload: user });
+  };
+
+  const userLostConnection = (user: User) => {
+    dispatch({ type: "disconnectUser", payload: user });
+  };
+
+  const setTime = (time: number) => {
+    setTimeLeft(time);
   };
 
   return {
@@ -232,5 +321,7 @@ export const useGame: Hook = () => {
     onAbort,
     onPause,
     onResume,
+    setTime,
+    time: timeLeft,
   };
 };

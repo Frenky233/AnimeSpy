@@ -10,7 +10,7 @@ type Props = {
 };
 
 export const JoinRoom: FC<Props> = ({ className }) => {
-  const { value, setCode } = useJoin();
+  const { value, setCode, linkRef } = useJoin();
 
   return (
     <div className={clsx(styles.join, className)}>
@@ -26,6 +26,7 @@ export const JoinRoom: FC<Props> = ({ className }) => {
         variant="Push"
         className={styles.joinButton}
         disabled={value.length < 5}
+        forwardRef={linkRef}
       >
         Войти
       </LinkButton>

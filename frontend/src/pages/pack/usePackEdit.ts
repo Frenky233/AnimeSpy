@@ -141,7 +141,7 @@ export const usePackEdit: Hook = () => {
             setShowPopup(popupInitialState);
           },
           variant: "Error",
-          time: 1000,
+          time: 1500,
         });
         return;
       }
@@ -200,7 +200,7 @@ export const usePackEdit: Hook = () => {
         terminate: () => {
           setShowPopup(popupInitialState);
         },
-        time: 2500,
+        time: 1500,
       });
 
       return;

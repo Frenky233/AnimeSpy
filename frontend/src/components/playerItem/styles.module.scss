@@ -13,6 +13,9 @@
     font-size: 24px;
     font-weight: 500;
     color: $borderColor;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
   }
 
   &Avatar {
@@ -20,4 +23,8 @@
     width: 72px;
     border-width: 1px;
   }
+}
+
+.offline {
+  opacity: 0.5;
 }

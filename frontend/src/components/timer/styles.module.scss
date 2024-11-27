@@ -1,0 +1,22 @@
+@import "@styles/variables";
+
+.timer {
+  height: 55px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+  color: $borderColor;
+  border-width: 2px;
+  font-size: 32px;
+  font-weight: 600;
+  background-color: #edf2f4;
+  border: 2px solid $borderColor;
+  border-radius: 8px;
+  padding: 8px;
+  transition: border-color 200ms ease-in-out;
+}
+
+.paused {
+  border-color: $buttonErrorColor;
+}

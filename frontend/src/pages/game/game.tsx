@@ -9,6 +9,7 @@ import { PackSelect } from "@/components/packSelect/component";
 import { GamePackItemsList } from "@/components/gamePackItemsList/component";
 import { AdminControls } from "@/components/adminControls/component";
 import { Popup } from "@/components/popup/component";
+import { UserControls } from "@/components/userControls/component";
 
 export default function GamePage({}) {
   const {
@@ -18,11 +19,15 @@ export default function GamePage({}) {
     isAdmin,
     isGameInProgress,
     isPaused,
+    isSpy,
+    card,
     onSelect,
     onStart,
     onAbort,
     onPause,
     onResume,
+    time,
+    setTime,
   } = useGame();
   const { onOpenSelect, onCloseSelect, showSelect, packs } = usePackSelect();
 
@@ -30,11 +35,21 @@ export default function GamePage({}) {
     <>
       <div className={styles.game}>
         <div className={styles.gameHeader}>
-          <LinkButton to="/" variant="Primary" className={styles.gameButton}>
-            <ReturnIcon />
-            <span>Выйти</span>
-          </LinkButton>
-          <div className={styles.gameCode}>Код: {id}</div>
+          <div className={styles.gameButtonsRow}>
+            <LinkButton to="/" variant="Primary" className={styles.gameButton}>
+              <ReturnIcon />
+              <span>Выйти</span>
+            </LinkButton>
+            <div className={styles.gameCode}>Код: {id}</div>
+            <UserControls
+              isSpy={isSpy}
+              card={card}
+              isPaused={!isGameInProgress || (isGameInProgress && isPaused)}
+              isGameInProgress={isGameInProgress}
+              time={time}
+              setTime={setTime}
+            />
+          </div>
           {isAdmin && (
             <AdminControls
               onSelectPack={onOpenSelect}
@@ -44,6 +59,7 @@ export default function GamePage({}) {
               onGameResume={onResume}
               isGameInProgress={isGameInProgress}
               isPaused={isPaused}
+              isPackSet={!!pack}
             />
           )}
         </div>

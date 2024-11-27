@@ -1,10 +1,8 @@
 .backdrop {
   position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  inset: 0;
   background-color: rgba(196, 196, 196, 0.5);
+  z-index: 999;
 }
 
 .modal {
@@ -17,7 +15,7 @@
   transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
-  z-index: 999;
+
   background-color: white;
   padding: 8px;
   padding-top: 32px;

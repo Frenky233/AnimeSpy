@@ -1,4 +1,4 @@
-import { type FC, type PropsWithChildren } from "react";
+import { RefObject, type FC, type PropsWithChildren } from "react";
 import styles from "./styles.module.scss";
 import clsx from "clsx";
 import { Link } from "react-router-dom";
@@ -8,6 +8,7 @@ type Props = PropsWithChildren<{
   className?: string;
   variant?: "Primary" | "Secondary" | "Push";
   disabled?: boolean;
+  forwardRef?: RefObject<HTMLAnchorElement>;
 }>;
 
 export const LinkButton: FC<Props> = ({
@@ -16,8 +17,20 @@ export const LinkButton: FC<Props> = ({
   className,
   variant,
   disabled,
+  forwardRef,
 }) => {
-  return (
+  return disabled ? (
+    <span
+      className={clsx(
+        styles.linkButton,
+        className,
+        styles[`variant${variant}`]
+      )}
+      aria-disabled={disabled}
+    >
+      {children}
+    </span>
+  ) : (
     <Link
       to={to}
       className={clsx(
@@ -26,6 +39,7 @@ export const LinkButton: FC<Props> = ({
         styles[`variant${variant}`]
       )}
       aria-disabled={disabled}
+      ref={forwardRef}
     >
       {children}
     </Link>

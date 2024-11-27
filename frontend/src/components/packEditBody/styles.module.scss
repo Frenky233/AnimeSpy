@@ -3,4 +3,8 @@
   grid-auto-rows: auto;
   grid-template-columns: 1fr 250px;
   gap: 4px;
+
+  &List {
+    grid-auto-rows: 280px;
+  }
 }
