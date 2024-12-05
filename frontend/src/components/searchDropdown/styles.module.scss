@@ -11,4 +11,11 @@
   border-radius: 8px;
   width: 100%;
   overflow: hidden;
+
+  &Empty {
+    font-size: 28px;
+    font-weight: 600;
+    color: rgba($borderColor, 0.7);
+    margin: 32px auto;
+  }
 }

@@ -8,6 +8,7 @@ type Props = {
   pause: boolean;
   isGameInProgress: boolean;
   setTime: (time: number) => void;
+  isLoading: boolean;
 };
 
 export const Timer: FC<Props> = ({
@@ -15,12 +16,17 @@ export const Timer: FC<Props> = ({
   pause,
   isGameInProgress,
   setTime,
+  isLoading,
 }) => {
   const { minutes, seconds } = useTimer(time, pause, isGameInProgress, setTime);
 
   return (
     <div
-      className={clsx(styles.timer, isGameInProgress && pause && styles.paused)}
+      className={clsx(
+        styles.timer,
+        isGameInProgress && pause && styles.paused,
+        isLoading && styles.loading
+      )}
     >
       {minutes.toLocaleString("ru-RU", { minimumIntegerDigits: 2 })}
       {" : "}

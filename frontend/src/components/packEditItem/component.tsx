@@ -9,14 +9,21 @@ import { Modal } from "../modal/component";
 import { PackItemInfo } from "../packItemInfo/component,";
 import { SuspenseImage } from "../ui/suspenseImage/component";
 import clsx from "clsx";
+import { voteType } from "@/pages/game/hooks/useControls";
 
 type Props = {
   item: PackItem;
   onDeleteItem?: (id: string) => void;
   className?: string;
+  onStartVote?: (type: voteType, id: string) => void;
 };
 
-export const PackEditItem: FC<Props> = ({ item, onDeleteItem, className }) => {
+export const PackEditItem: FC<Props> = ({
+  item,
+  onDeleteItem,
+  className,
+  onStartVote,
+}) => {
   const [showInfoModal, setShowInfoModal] = useState<boolean>(false);
 
   const onOpen = () => {
@@ -29,7 +36,16 @@ export const PackEditItem: FC<Props> = ({ item, onDeleteItem, className }) => {
 
   return (
     <>
-      <div className={clsx(styles.item, className)}>
+      <div
+        className={clsx(styles.item, className)}
+        onClick={
+          onStartVote
+            ? () => {
+                onStartVote("Card", item.id);
+              }
+            : undefined
+        }
+      >
         <SuspenseImage
           src={item.posterUrl}
           srcSet={`${item.poster2xUrl} 2x`}

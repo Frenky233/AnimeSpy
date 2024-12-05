@@ -5,6 +5,9 @@
   grid-template-columns: repeat(5, 1fr);
   grid-gap: 16px;
   position: relative;
+  overflow-y: auto;
+  height: 100%;
+  padding: 0px 8px 16px;
 
   &Empty {
     position: absolute;

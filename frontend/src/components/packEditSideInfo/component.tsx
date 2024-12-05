@@ -1,15 +1,26 @@
 import { FC } from "react";
 import styles from "./styles.module.scss";
 import { Button } from "../ui/button/component";
+import clsx from "clsx";
 
 type Props = {
+  onSubmit: () => Promise<void>;
   onDeletePack: () => void;
   onCancel: () => void;
+  className?: string;
 };
 
-export const PackEditSideInfo: FC<Props> = ({ onDeletePack, onCancel }) => {
+export const PackEditSideInfo: FC<Props> = ({
+  onSubmit,
+  onDeletePack,
+  onCancel,
+  className,
+}) => {
   return (
-    <div className={styles.info}>
+    <aside className={clsx(styles.info, className)}>
+      <Button variant="Push" className={styles.infoSave} onClick={onSubmit}>
+        Сохранить
+      </Button>
       <Button variant="Push" className={styles.infoCancel} onClick={onCancel}>
         Отмена
       </Button>
@@ -29,6 +40,6 @@ export const PackEditSideInfo: FC<Props> = ({ onDeletePack, onCancel }) => {
           3-4: 20 <br /> 5-6: 25 <br /> 7-8: 30
         </li>
       </ul>
-    </div>
+    </aside>
   );
 };

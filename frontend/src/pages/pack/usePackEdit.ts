@@ -119,7 +119,7 @@ export const usePackEdit: Hook = () => {
 
   const debounced = useDebouncedCallback(
     (value: string) => setSearchItems(value, pack.type),
-    200
+    300
   );
 
   const onSearchQueryChange = useCallback(

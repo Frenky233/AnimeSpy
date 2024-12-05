@@ -8,6 +8,7 @@
     color: $borderColor;
   }
 
+  &Save,
   &Delete,
   &Cancel {
     width: 100%;
@@ -25,10 +26,6 @@
       &:hover {
         background-color: $buttonErrorColorHover;
       }
-    }
-
-    &Wrapper {
-      text-decoration: none;
     }
   }
 

@@ -9,6 +9,7 @@ type Props = PropsWithChildren<{
   withProgressBar: boolean;
   className?: string;
   time?: number;
+  startTime?: number;
 }>;
 
 export const Popup: FC<Props> = ({
@@ -18,17 +19,18 @@ export const Popup: FC<Props> = ({
   withProgressBar,
   className,
   time = 2000,
+  startTime = 0,
 }) => {
   const progressBarRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (variant === "Info") return;
 
-    const timer = setTimeout(terminate!, time + 200);
+    const timer = setTimeout(terminate!, time - startTime + 200);
 
     if (!withProgressBar) return;
 
-    const interval = startProgressBar(time, progressBarRef);
+    const interval = startProgressBar(time, progressBarRef, startTime);
 
     return () => {
       clearTimeout(timer);
@@ -38,9 +40,10 @@ export const Popup: FC<Props> = ({
 
   const startProgressBar = (
     initialTime: number,
-    ref: React.RefObject<HTMLDivElement>
+    ref: React.RefObject<HTMLDivElement>,
+    startTime: number = 0
   ) => {
-    let timeLeft = initialTime;
+    let timeLeft = initialTime - startTime;
     let interval: number = Infinity;
 
     const render = () => {

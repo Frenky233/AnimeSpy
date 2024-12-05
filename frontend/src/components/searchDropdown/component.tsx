@@ -19,6 +19,10 @@ export const SearchDropdown: FC<Props> = ({ items, onAddItem, isLoading }) => {
           <SearchDropdownItemLoading />
           <SearchDropdownItemLoading />
         </>
+      ) : items.length === 0 ? (
+        <h4 className={styles.searchDropdownEmpty}>
+          <em>Ничего не найдено</em>
+        </h4>
       ) : (
         items.map((item) => (
           <SearchDropdownItem item={item} onAddItem={onAddItem} key={item.id} />

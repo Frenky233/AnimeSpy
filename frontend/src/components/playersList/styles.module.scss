@@ -20,4 +20,78 @@
     gap: 4px;
     overflow-y: auto;
   }
+
+  &Voting &Title {
+    color: $buttonErrorColor;
+  }
+
+  &Voting &Item {
+    cursor: pointer;
+    transition: background-color 200ms ease-in-out,
+      border-color 200ms ease-in-out;
+
+    &:hover {
+      background-color: #dddddd;
+      border-color: $buttonErrorColor;
+    }
+  }
+
+  &Voting &NoVote {
+    cursor: not-allowed;
+    transition: none;
+    background-color: #ffffff !important;
+    border-color: $borderColor !important;
+    position: none;
+  }
+}
+
+.loadingAnimation {
+  background-color: #ededed;
+  background: linear-gradient(
+      100deg,
+      rgba(255, 255, 255, 0) 40%,
+      rgba(255, 255, 255, 0.5) 50%,
+      rgba(255, 255, 255, 0) 60%
+    )
+    #e0e0e0;
+  background-size: 200% 100%;
+  background-position-x: 180%;
+  animation: 1s loading ease-in-out infinite;
+}
+
+.loading {
+  display: flex;
+  height: 75px;
+  align-items: center;
+  gap: 4px;
+  border: 2px solid $borderColor;
+  border-radius: 8px;
+  background-color: #edf2f4;
+  padding-right: 4px;
+  width: 100%;
+
+  &Name {
+    height: 24px;
+    border-radius: 4px;
+    animation-delay: 200ms;
+    flex-grow: 1;
+  }
+
+  &Avatar {
+    height: 70px;
+    width: 70px;
+    max-width: 72px;
+    border-width: 1px;
+    border-radius: 50%;
+  }
+
+  &Name {
+    animation-delay: 200ms;
+  }
+}
+
+@keyframes loading {
+  to {
+    background-position-x: -20%;
+  }
 }

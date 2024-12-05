@@ -1,8 +1,8 @@
 @import "@styles/variables";
 
 .header {
-  display: grid;
-  grid-template-columns: auto 1fr 250px;
+  display: flex;
+
   gap: 4px;
   height: 55px;
 
@@ -27,18 +27,6 @@
 
   &SearchBar {
     position: relative;
-  }
-
-  &Save {
-    font-size: 32px;
-    font-weight: 600;
-    color: $borderColor;
-    background-color: $buttonSecondaryColor;
-
-    @media screen and (min-width: 766px) {
-      &:hover {
-        background-color: $buttonSecondaryColorHover;
-      }
-    }
+    flex-grow: 1;
   }
 }

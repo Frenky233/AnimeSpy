@@ -6,14 +6,21 @@ import { PackEditItem } from "../packEditItem/component";
 import { useDropdown } from "./useDropdown";
 import clsx from "clsx";
 import { Button } from "../ui/button/component";
+import { voteType } from "@/pages/game/hooks/useControls";
 
 type Props = {
   isSpy: boolean;
   card: PackItem | null;
   isGameInProgress: boolean;
+  onStartVoting: (type: voteType) => void;
 };
 
-export const GameCard: FC<Props> = ({ isSpy, card, isGameInProgress }) => {
+export const GameCard: FC<Props> = ({
+  isSpy,
+  card,
+  isGameInProgress,
+  onStartVoting,
+}) => {
   const { isOpen, onOpen, onClose } = useDropdown(isGameInProgress);
 
   return (
@@ -21,7 +28,7 @@ export const GameCard: FC<Props> = ({ isSpy, card, isGameInProgress }) => {
       <Button
         className={styles.cardTitle}
         onClick={isOpen ? onClose : onOpen}
-        disabled={!isGameInProgress}
+        disabled={!isGameInProgress || (!isSpy && !card)}
       >
         <DropdownIcon />
         <h5>Ваша карта</h5>
@@ -32,12 +39,18 @@ export const GameCard: FC<Props> = ({ isSpy, card, isGameInProgress }) => {
             <div className={styles.cardUpper}>
               <h6>Шпион</h6>
             </div>
-            <Button className={clsx(styles.cardTitle, styles.cardVote)}>
+            <Button
+              className={clsx(styles.cardTitle, styles.cardVote)}
+              onClick={() => {
+                onClose();
+                onStartVoting("Card");
+              }}
+            >
               Угадать
             </Button>
           </div>
         ) : (
-          card && <PackEditItem item={card!} className={styles.cardData} />
+          card && <PackEditItem item={card} className={styles.cardData} />
         ))}
     </div>
   );

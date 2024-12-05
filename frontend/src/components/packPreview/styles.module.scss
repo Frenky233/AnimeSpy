@@ -7,20 +7,20 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  box-shadow: rgba(0, 0, 0, 0.5) 0px 3px 8px;
   background-color: #ffffff;
 
   &Images {
     display: grid;
-    grid-template-columns: 90px 90px;
-    grid-template-rows: 130px 130px;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
     margin: 0 auto;
     border-radius: 4px;
     overflow: hidden;
 
     img {
-      width: 90px;
-      height: 130px;
+      width: 100%;
+      height: 100%;
       object-fit: fill;
     }
   }

@@ -1,6 +1,10 @@
 @import "@styles/variables";
 
 .game {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
   &Header {
     display: flex;
     margin-bottom: 4px;
@@ -16,6 +20,7 @@
 
   &Body {
     display: grid;
+    overflow: hidden;
     grid-template-columns: 275px 1fr;
   }
 
@@ -30,10 +35,40 @@
     justify-content: center;
     align-items: center;
     padding: 8px;
+    width: 200px;
+    white-space: pre;
   }
 
   &Pause {
     padding-top: 16px;
+  }
+
+  &End {
+    padding-top: 4px;
+  }
+
+  &Modal {
+    padding: 8px;
+  }
+
+  &Vote {
+    padding: 0;
+    button {
+      background-color: $buttonErrorColor;
+      border: none;
+      font-size: 32px;
+      font-weight: 600;
+
+      @media screen and (min-width: 766px) {
+        &:hover {
+          background-color: $buttonErrorColorHover;
+        }
+      }
+
+      &:active {
+        background-color: $buttonErrorColorHover;
+      }
+    }
   }
 
   &Button {
@@ -53,5 +88,26 @@
     &:active {
       background-color: #ccd1d3;
     }
+  }
+}
+
+.loading {
+  background-color: #ededed;
+  background: linear-gradient(
+      100deg,
+      rgba(255, 255, 255, 0) 40%,
+      rgba(255, 255, 255, 0.5) 50%,
+      rgba(255, 255, 255, 0) 60%
+    )
+    #ededed;
+  background-size: 200% 100%;
+  background-position-x: 180%;
+  animation: 1s loading ease-in-out infinite;
+  color: transparent;
+}
+
+@keyframes loading {
+  to {
+    background-position-x: -20%;
   }
 }

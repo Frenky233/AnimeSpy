@@ -8,9 +8,16 @@
     text-align: center;
   }
 
+  &Alert {
+    font-size: 32px;
+    font-weight: 600;
+    color: rgba($borderColor, 0.7);
+    margin: 32px auto;
+  }
+
   &Packs {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     grid-gap: 16px;
     position: relative;
   }

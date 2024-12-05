@@ -1,0 +1,63 @@
+@import "@styles/variables";
+
+.notification {
+  width: 320px;
+  padding: 2px;
+  position: relative;
+
+  &Title {
+    text-align: center;
+    color: $borderColor;
+    font-size: 28px;
+    font-weight: 600;
+    white-space: nowrap;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 4px;
+  }
+
+  &Data {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &SpyWon {
+    > h4 {
+      color: $buttonErrorColorHover;
+    }
+  }
+
+  &SpyLost {
+    > h4 {
+      color: $buttonSecondaryColorHover;
+    }
+  }
+
+  &Close {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    padding: 0;
+    border: none;
+    background-color: transparent;
+    transition: background-color ease-in-out 200ms;
+
+    svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    @media screen and (min-width: 766px) {
+      &:hover {
+        background-color: #ccd1d3;
+      }
+    }
+
+    &:active {
+      background-color: #ccd1d3;
+    }
+  }
+}

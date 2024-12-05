@@ -14,6 +14,17 @@ export type User = {
   name: string;
   avatar: string | null;
   isOnline: boolean;
+  isObserver: boolean;
+  isVoted: boolean | null;
+  score: number;
+};
+
+export type Voting = {
+  isVoting: boolean;
+  votingStartTime: number | null;
+  isVoted: boolean | null;
+  targetId: string | null;
+  userId: string | null;
 };
 
 export type ServerPack = Omit<Pack, "id">;

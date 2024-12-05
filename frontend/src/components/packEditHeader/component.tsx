@@ -4,8 +4,8 @@ import { LinkButton } from "../ui/linkButton/component";
 import ReturnIcon from "@/assets/images/returnIcon.svg?react";
 import { SearchBar } from "../searchBar/component";
 import { SearchDropdown } from "../searchDropdown/component";
-import { Button } from "../ui/button/component";
 import { PackItem } from "@/db/db";
+import clsx from "clsx";
 
 type Props = {
   searchQuery: string;
@@ -13,7 +13,7 @@ type Props = {
   dropdownItems: PackItem[];
   onAddItem: (item: PackItem) => void;
   isLoading: boolean;
-  onSubmit: () => Promise<void>;
+  className?: string;
 };
 
 export const PackEditHeader: FC<Props> = ({
@@ -22,10 +22,10 @@ export const PackEditHeader: FC<Props> = ({
   dropdownItems,
   onAddItem,
   isLoading,
-  onSubmit,
+  className,
 }) => {
   return (
-    <div className={styles.header}>
+    <div className={clsx(styles.header, className)}>
       <LinkButton to="/packs" variant="Primary" className={styles.headerReturn}>
         <ReturnIcon />
         <span>Назад</span>
@@ -44,9 +44,6 @@ export const PackEditHeader: FC<Props> = ({
           />
         )}
       </div>
-      <Button variant="Push" className={styles.headerSave} onClick={onSubmit}>
-        Сохранить
-      </Button>
     </div>
   );
 };

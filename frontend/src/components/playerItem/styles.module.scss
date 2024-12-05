@@ -8,6 +8,7 @@
   border: 2px solid $borderColor;
   border-radius: 8px;
   background-color: #edf2f4;
+  padding-right: 4px;
 
   &Name {
     font-size: 24px;
@@ -20,8 +21,24 @@
 
   &Avatar {
     height: 72px;
-    width: 72px;
+    max-width: 72px;
     border-width: 1px;
+  }
+
+  &Score {
+    font-size: 32px;
+    font-weight: 500;
+    color: $borderColor;
+    margin-left: auto;
+  }
+
+  &Voted {
+    &Yes {
+      border-color: $buttonSecondaryColorHover;
+    }
+    &No {
+      border-color: $buttonErrorColor;
+    }
   }
 }
 

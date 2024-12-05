@@ -2,10 +2,11 @@ import styles from "./styles.module.scss";
 import { usePackEdit } from "./usePackEdit";
 import { PackEditSettings } from "@/components/packEditSettings/component";
 import { PackEditHeader } from "@/components/packEditHeader/component";
-import { PackEditBody } from "@/components/packEditBody/component";
 import { Modal } from "@/components/modal/component";
 import { ConfirmPopup } from "@/components/confirmPopup/component";
 import { Popup } from "@/components/popup/component";
+import { PackEditSideInfo } from "@/components/packEditSideInfo/component";
+import { PackEditItemsList } from "@/components/packEditItemsList/component";
 
 export default function PackPage({}) {
   const {
@@ -42,14 +43,17 @@ export default function PackPage({}) {
           onSearchQueryChange={onSearchQueryChange}
           isLoading={isLoading}
           onAddItem={onAddItem}
-          onSubmit={onSubmit}
           dropdownItems={searchItemsData}
+          className={styles.packHeader}
         />
-        <PackEditBody
-          items={items}
-          onDeleteItem={onDeleteItem}
+        <div className={styles.packBody}>
+          <PackEditItemsList items={items} onDeleteItem={onDeleteItem} />
+        </div>
+        <PackEditSideInfo
+          onSubmit={onSubmit}
           onDeletePack={onDelete}
           onCancel={onCancel}
+          className={styles.packInfo}
         />
       </div>
       {message.show && (

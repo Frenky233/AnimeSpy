@@ -4,12 +4,31 @@ import { getCook } from "@/utils/getCook";
 import { useContext, useEffect, useReducer, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { io, Socket } from "socket.io-client";
+import { voteType } from "./useControls";
 
-type User = {
+export type User = {
   id: string;
   name: string;
   avatar: string;
   isOnline: boolean;
+  isObserver: boolean;
+  score: number;
+  isVoted: boolean | null;
+};
+
+type endGameNotification = {
+  isSpyWon: boolean;
+  card: PackItem;
+  spy: User;
+};
+
+type Voting = {
+  isVoting: boolean;
+  isVoted: boolean | null;
+  targetId: string | null;
+  userId: string | null;
+  votingStartTime: number | null;
+  terminate: (() => void) | null;
 };
 
 type State = {
@@ -20,7 +39,8 @@ type State = {
   isSpy: boolean;
 };
 
-type Hook = () => {
+type Hook = (onCancelVoting: () => void) => {
+  isLoading: boolean;
   users: User[];
   pack: Pack | null;
   id: string;
@@ -34,8 +54,14 @@ type Hook = () => {
   onAbort: () => void;
   onPause: () => void;
   onResume: () => void;
+  onStartVote: (type: voteType, id: string) => void;
   time: number;
   setTime: (time: number) => void;
+  endGameNotification: endGameNotification | null;
+  onCloseNotification: () => void;
+  voting: Voting;
+  onSubmitVote: (userId: string, vote: boolean) => void;
+  userId: string;
 };
 
 type Action =
@@ -66,6 +92,14 @@ type Action =
   | {
       type: "setIsSpy";
       payload: boolean;
+    }
+  | {
+      type: "setUserVoted";
+      payload: { id: string; voted: boolean };
+    }
+  | {
+      type: "setVotingEnded";
+      payload: null;
     };
 
 const INITIAL_STATE: State = {
@@ -123,16 +157,31 @@ const reducer = (state: State, { type, payload }: Action): State => {
         ...state,
         isSpy: payload,
       };
+    case "setUserVoted":
+      state.users[
+        state.users.findIndex(({ id }) => id === payload.id)
+      ].isVoted = payload.voted;
+
+      return {
+        ...state,
+      };
+    case "setVotingEnded":
+      state.users.forEach((user) => (user.isVoted = null));
+
+      return {
+        ...state,
+      };
     default: {
       return state;
     }
   }
 };
 
-export const useGame: Hook = () => {
+export const useGame: Hook = (onCancelVoting) => {
   const { name, avatarID } = useContext(UserContext);
   const params = useParams();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [game, dispatch] = useReducer(reducer, INITIAL_STATE);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [isGameInProgress, setIsGameInProgress] = useState<boolean>(false);
@@ -140,6 +189,17 @@ export const useGame: Hook = () => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [userId, setUserId] = useState<string>("");
   const [timeLeft, setTimeLeft] = useState<number>(600);
+  const [showEndGame, setShowEndGame] = useState<endGameNotification | null>(
+    null
+  );
+  const [voting, setVoting] = useState<Voting>({
+    isVoting: false,
+    isVoted: null,
+    targetId: null,
+    userId: null,
+    terminate: null,
+    votingStartTime: null,
+  });
 
   useEffect(() => {
     const userId = getCook("userId");
@@ -150,7 +210,7 @@ export const useGame: Hook = () => {
       path: "/api/ws",
       query: {
         name: name ? name : "МЕССИ10",
-        avatar: avatarID ? `https://i.imgur.com/${avatarID}.png` : null,
+        avatar: avatarID ? avatarID : null,
         roomId: params.id?.toUpperCase(),
         userId: userId,
       },
@@ -168,6 +228,10 @@ export const useGame: Hook = () => {
     socket.on("gameResumed", resumeGame);
     socket.on("userReconnected", userReconnected);
     socket.on("userLostConnection", userLostConnection);
+    socket.on("endGame", endGame);
+    socket.on("voteInitiated", voteInitiated);
+    socket.on("userVoted", userVoted);
+    socket.on("votingEnded", votingEnded);
 
     const disconnectFromSocket = () => {
       socket.off("joinRoom", joinRoom);
@@ -180,6 +244,10 @@ export const useGame: Hook = () => {
       socket.off("gameResumed", resumeGame);
       socket.off("userReconnected", userReconnected);
       socket.off("userLostConnection", userLostConnection);
+      socket.off("endGame", endGame);
+      socket.off("voteInitiated", voteInitiated);
+      socket.off("userVoted", userVoted);
+      socket.off("votingEnded", votingEnded);
 
       socket.close();
     };
@@ -204,6 +272,7 @@ export const useGame: Hook = () => {
     timeLeft: number;
     isSpy: boolean;
     card: PackItem | null;
+    voting: Voting;
   }) => {
     if (!args.isReconnect) {
       document.cookie = `userId=${args.userId}; max-age=86400; path=/;`;
@@ -225,10 +294,17 @@ export const useGame: Hook = () => {
         isSpy: args.isSpy,
       },
     });
+
     setIsAdmin(args.isAdmin);
     setIsGameInProgress(args.isGameInProgress);
     setIsPaused(args.isPaused);
     setTimeLeft(args.timeLeft);
+    setVoting({
+      ...args.voting,
+      terminate: terminateVoting,
+    });
+
+    setIsLoading(false);
   };
 
   const userJoined = (args: User) => {
@@ -276,8 +352,16 @@ export const useGame: Hook = () => {
     socket?.emit("resumeGame", game.id, userId);
   };
 
+  const onStartVote = (type: voteType, id: string) => {
+    if (!type) return;
+
+    socket?.emit("startVote", type, game.id, userId, id);
+    onCancelVoting();
+  };
+
   const startGame = (args: { isSpy: boolean; card: PackItem }) => {
     setIsGameInProgress(true);
+    setShowEndGame(null);
 
     dispatch({ type: "setIsSpy", payload: args.isSpy });
     dispatch({ type: "setCard", payload: args.card });
@@ -289,6 +373,15 @@ export const useGame: Hook = () => {
     dispatch({ type: "updateUsers", payload: users });
 
     setTimeLeft(600);
+    onCancelVoting();
+    setVoting({
+      isVoting: false,
+      isVoted: null,
+      targetId: null,
+      userId: null,
+      terminate: null,
+      votingStartTime: null,
+    });
   };
 
   const pauseGame = () => {
@@ -311,7 +404,81 @@ export const useGame: Hook = () => {
     setTimeLeft(time);
   };
 
+  const voteInitiated = (userId: string, targetId: string) => {
+    pauseGame();
+
+    dispatch({ type: "setUserVoted", payload: { voted: true, id: userId } });
+    dispatch({ type: "setUserVoted", payload: { voted: false, id: targetId } });
+
+    const id = getCook("userId");
+
+    setVoting({
+      isVoting: true,
+      isVoted: userId === id || (targetId === id ? false : null),
+      targetId,
+      userId,
+      votingStartTime: null,
+      terminate: terminateVoting,
+    });
+  };
+
+  const onSubmitVote = (userId: string, vote: boolean) => {
+    setVoting((val) => {
+      return { ...val, isVoted: true };
+    });
+
+    socket?.emit("submitVote", game.id, userId, vote);
+  };
+
+  const userVoted = (userId: string, vote: boolean) => {
+    dispatch({ type: "setUserVoted", payload: { id: userId, voted: vote } });
+  };
+
+  const endGame = (
+    isSpyWon: boolean,
+    scoredUsers: User[],
+    spy: User,
+    card: PackItem
+  ) => {
+    abortGame(scoredUsers);
+
+    setShowEndGame({
+      isSpyWon,
+      card,
+      spy,
+    });
+  };
+
+  const votingEnded = () => {
+    resumeGame();
+
+    dispatch({ type: "setVotingEnded", payload: null });
+    setVoting({
+      isVoting: false,
+      targetId: null,
+      userId: null,
+      isVoted: null,
+      terminate: null,
+      votingStartTime: null,
+    });
+  };
+
+  const onCloseNotification = () => {
+    setShowEndGame(null);
+  };
+
+  const terminateVoting = () =>
+    setVoting({
+      isVoting: false,
+      targetId: null,
+      userId: null,
+      isVoted: null,
+      terminate: null,
+      votingStartTime: null,
+    });
+
   return {
+    isLoading,
     ...game,
     isAdmin,
     isGameInProgress,
@@ -321,7 +488,13 @@ export const useGame: Hook = () => {
     onAbort,
     onPause,
     onResume,
+    onStartVote,
     setTime,
     time: timeLeft,
+    endGameNotification: showEndGame,
+    onCloseNotification,
+    voting,
+    onSubmitVote,
+    userId,
   };
 };
