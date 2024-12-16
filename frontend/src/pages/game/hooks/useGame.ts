@@ -35,6 +35,7 @@ type State = {
   id: string;
   users: User[];
   pack: Pack | null;
+  cardsForRound: PackItem[] | null;
   card: PackItem | null;
   isSpy: boolean;
 };
@@ -46,11 +47,12 @@ type Hook = (onCancelVoting: () => void) => {
   id: string;
   isSpy: boolean;
   card: PackItem | null;
+  cardsForRound: PackItem[] | null;
   isAdmin: boolean;
   isGameInProgress: boolean;
   isPaused: boolean;
   onSelect: (pack: Pack) => void;
-  onStart: () => void;
+  onStart: (cardsForRound: number, minutesPerRound: number) => void;
   onAbort: () => void;
   onPause: () => void;
   onResume: () => void;
@@ -98,8 +100,12 @@ type Action =
       payload: { id: string; voted: boolean };
     }
   | {
-      type: "setVotingEnded";
+      type: "setVotingEnded" | "setInitialCards";
       payload: null;
+    }
+  | {
+      type: "setCardsForRound";
+      payload: PackItem[];
     };
 
 const INITIAL_STATE: State = {
@@ -108,6 +114,7 @@ const INITIAL_STATE: State = {
   pack: null,
   isSpy: false,
   card: null,
+  cardsForRound: null,
 };
 
 const reducer = (state: State, { type, payload }: Action): State => {
@@ -146,6 +153,20 @@ const reducer = (state: State, { type, payload }: Action): State => {
       return {
         ...state,
         users: payload,
+      };
+    case "setCardsForRound":
+      return {
+        ...state,
+        cardsForRound: payload,
+      };
+    case "setInitialCards":
+      return {
+        ...state,
+        pack: {
+          ...state.pack!,
+          items: state.pack!.items,
+        },
+        cardsForRound: null,
       };
     case "setCard":
       return {
@@ -188,7 +209,7 @@ export const useGame: Hook = (onCancelVoting) => {
   const [isPaused, setIsPaused] = useState<boolean>(false);
   const [socket, setSocket] = useState<Socket | null>(null);
   const [userId, setUserId] = useState<string>("");
-  const [timeLeft, setTimeLeft] = useState<number>(600);
+  const [timeLeft, setTimeLeft] = useState<number>(0);
   const [showEndGame, setShowEndGame] = useState<endGameNotification | null>(
     null
   );
@@ -273,6 +294,7 @@ export const useGame: Hook = (onCancelVoting) => {
     isSpy: boolean;
     card: PackItem | null;
     voting: Voting;
+    cardsForRound: PackItem[] | null;
   }) => {
     if (!args.isReconnect) {
       document.cookie = `userId=${args.userId}; max-age=86400; path=/;`;
@@ -292,6 +314,7 @@ export const useGame: Hook = (onCancelVoting) => {
         pack: args.pack,
         card: args.card,
         isSpy: args.isSpy,
+        cardsForRound: args.cardsForRound,
       },
     });
 
@@ -334,10 +357,10 @@ export const useGame: Hook = (onCancelVoting) => {
     );
   };
 
-  const onStart = () => {
+  const onStart = (cardsForRound: number, minutesPerRound: number) => {
     if (!game.pack) return;
 
-    socket?.emit("startGame", game.id, userId);
+    socket?.emit("startGame", game.id, userId, cardsForRound, minutesPerRound);
   };
 
   const onAbort = () => {
@@ -359,20 +382,30 @@ export const useGame: Hook = (onCancelVoting) => {
     onCancelVoting();
   };
 
-  const startGame = (args: { isSpy: boolean; card: PackItem }) => {
+  const startGame = (args: {
+    isSpy: boolean;
+    card: PackItem;
+    cardsForRound: PackItem[] | null;
+    minutes: number;
+  }) => {
     setIsGameInProgress(true);
     setShowEndGame(null);
+    setTimeLeft(args.minutes * 60);
 
     dispatch({ type: "setIsSpy", payload: args.isSpy });
     dispatch({ type: "setCard", payload: args.card });
+    args.cardsForRound &&
+      dispatch({ type: "setCardsForRound", payload: args.cardsForRound });
   };
 
-  const abortGame = (users: User[]) => {
+  const abortGame = (users: User[], isCardsPicked: boolean) => {
     setIsGameInProgress(false);
     setIsPaused(false);
     dispatch({ type: "updateUsers", payload: users });
 
-    setTimeLeft(600);
+    isCardsPicked && dispatch({ type: "setInitialCards", payload: null });
+
+    setTimeLeft(0);
     onCancelVoting();
     setVoting({
       isVoting: false,
@@ -438,9 +471,10 @@ export const useGame: Hook = (onCancelVoting) => {
     isSpyWon: boolean,
     scoredUsers: User[],
     spy: User,
-    card: PackItem
+    card: PackItem,
+    isCardsPicked: boolean
   ) => {
-    abortGame(scoredUsers);
+    abortGame(scoredUsers, isCardsPicked);
 
     setShowEndGame({
       isSpyWon,
@@ -480,6 +514,7 @@ export const useGame: Hook = (onCancelVoting) => {
   return {
     isLoading,
     ...game,
+    cardsForRound: game.cardsForRound,
     isAdmin,
     isGameInProgress,
     isPaused,

@@ -1,6 +1,6 @@
 import { FC } from "react";
 import styles from "./styles.module.scss";
-import { Pack } from "@/db/db";
+import { Pack, PackItem } from "@/db/db";
 import { PackEditItemsList } from "../packEditItemsList/component";
 import SearchIcon from "@/assets/images/searchIcon.svg?react";
 import { Button } from "../ui/button/component";
@@ -11,6 +11,7 @@ import { voteType } from "@/pages/game/hooks/useControls";
 
 type Props = {
   pack: Pack | null;
+  cardsForRound: PackItem[] | null;
   voting: boolean;
   onStartVote: (type: voteType, id: string) => void;
   isLoading: boolean;
@@ -18,12 +19,13 @@ type Props = {
 
 export const GamePackItemsList: FC<Props> = ({
   pack,
+  cardsForRound,
   voting,
   onStartVote,
   isLoading,
 }) => {
   const { query, onOpen, onClose, isVisible, onChange, items } = useSearch(
-    pack?.items
+    cardsForRound ? cardsForRound : pack?.items
   );
 
   return (

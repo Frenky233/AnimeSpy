@@ -30,7 +30,7 @@ export const UserAuth: FC<Props> = ({ className }) => {
             return;
           }
 
-          setUserName(event.target.value);
+          setUserName(event.target.value.trimStart());
         }}
       />
       {showPopup && (

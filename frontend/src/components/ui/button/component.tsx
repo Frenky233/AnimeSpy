@@ -7,7 +7,7 @@ type Props = PropsWithChildren<{
   disabled?: HTMLButtonElement["disabled"];
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   type?: HTMLButtonElement["type"];
-  variant?: "Primary" | "Secondary" | "Push";
+  variant?: "Primary" | "Secondary" | "Third" | "Push";
   forwardRef?: RefObject<HTMLButtonElement>;
 }>;
 

@@ -40,12 +40,14 @@ export function initWebsocket(server: any) {
       | {
           id: string;
           pack: ServerPack | null;
+          cardsForRound: PackItem[] | null;
           users: User[];
           isGameInProgress: boolean;
           isPaused: boolean;
           timeLeft: number;
           card: PackItem | null;
           usersOnline: number;
+          isCardsPicked: boolean;
         }
       | undefined;
     let isAdmin = false;
@@ -73,12 +75,14 @@ export function initWebsocket(server: any) {
       room = {
         id: roomId,
         pack: null,
+        cardsForRound: null,
         users: [user],
         isGameInProgress: false,
         isPaused: false,
         timeLeft: 600,
         card: null,
         usersOnline: 1,
+        isCardsPicked: false,
       };
       isAdmin = true;
 
@@ -86,6 +90,8 @@ export function initWebsocket(server: any) {
         id: roomId,
         pack: JSON.stringify(null),
         spy: JSON.stringify(null),
+        cardsForRound: JSON.stringify(null),
+        isCardsPicked: JSON.stringify(false),
         card: JSON.stringify(null),
         users: JSON.stringify([user]),
         host: user.id,
@@ -107,6 +113,8 @@ export function initWebsocket(server: any) {
         id: roomRaw.id,
         users: JSON.parse(roomRaw.users),
         pack: JSON.parse(roomRaw.pack),
+        cardsForRound: JSON.parse(roomRaw.cardsForRound),
+        isCardsPicked: JSON.parse(roomRaw.isCardsPicked),
         isGameInProgress: JSON.parse(roomRaw.isGameInProgress),
         isPaused: JSON.parse(roomRaw.isPaused),
         card: JSON.parse(roomRaw.card),
@@ -168,6 +176,7 @@ export function initWebsocket(server: any) {
       isAdmin,
       isReconnect,
       voting,
+      cardsForRound: room.cardsForRound,
     });
 
     socket.on(
@@ -189,43 +198,64 @@ export function initWebsocket(server: any) {
       }
     );
 
-    socket.on("startGame", async (roomId: string, userId: string) => {
-      if (!(await checkIsAdmin(userId, roomId))) return;
+    socket.on(
+      "startGame",
+      async (
+        roomId: string,
+        userId: string,
+        cardsAmount: number,
+        minutes: number
+      ) => {
+        if (!(await checkIsAdmin(userId, roomId))) return;
 
-      const data = await redisClient.hmGet(roomId, [
-        "pack",
-        "isGameInProgress",
-        "users",
-      ]);
-      const pack: ServerPack | null = JSON.parse(data[0]);
-      const isGameInProgress: boolean = JSON.parse(data[1]);
-      const users: User[] = JSON.parse(data[2]);
+        const data = await redisClient.hmGet(roomId, [
+          "pack",
+          "isGameInProgress",
+          "users",
+        ]);
+        const pack: ServerPack | null = JSON.parse(data[0]);
+        const isGameInProgress: boolean = JSON.parse(data[1]);
+        const users: User[] = JSON.parse(data[2]);
 
-      if (!pack) return;
-      if (isGameInProgress) return;
+        if (!pack) return;
+        if (isGameInProgress) return;
 
-      const card = pack.items[Math.floor(Math.random() * pack.items.length)];
-      const spy = users[Math.floor(Math.random() * users.length)].id;
+        const isCardsPicked = cardsAmount !== pack.items.length;
+        const cardsForRound = isCardsPicked
+          ? pickCardsForRound(pack.items, cardsAmount)
+          : pack.items;
+        const card =
+          cardsForRound[Math.floor(Math.random() * cardsForRound.length)];
+        const spy = users[Math.floor(Math.random() * users.length)].id;
 
-      await redisClient.hSet(roomId, {
-        isGameInProgress: JSON.stringify(true),
-        lastPause: Date.now(),
-        spy: spy,
-        card: JSON.stringify(card),
-      });
+        await redisClient.hSet(roomId, {
+          isGameInProgress: JSON.stringify(true),
+          lastPause: Date.now(),
+          spy: spy,
+          card: JSON.stringify(card),
+          timeLeft: minutes * 60 * 1000,
+          cardsForRound: isCardsPicked
+            ? JSON.stringify(cardsForRound)
+            : JSON.stringify(null),
+          isCardsPicked: JSON.stringify(isCardsPicked),
+        });
 
-      timers[roomId] = setTimeout(
-        async () => await timerEnd(roomId),
-        600 * 1000
-      );
+        timers[roomId] = setTimeout(
+          async () => await timerEnd(roomId),
+          minutes * 60 * 1000
+        );
 
-      (await io?.in(roomId).fetchSockets())?.forEach((socket) =>
-        socket.emit("gameStarted", {
-          isSpy: socket.data.userId === spy,
-          card: socket.data.userId === spy ? null : card,
-        })
-      );
-    });
+        (await io?.in(roomId).fetchSockets())?.forEach((socket) =>
+          socket.emit("gameStarted", {
+            isSpy: socket.data.userId === spy,
+            card: socket.data.userId === spy ? null : card,
+            cardsForRound:
+              cardsAmount === pack.items.length ? null : cardsForRound,
+            minutes,
+          })
+        );
+      }
+    );
 
     const abortGame = async (
       roomId: string,
@@ -239,9 +269,11 @@ export function initWebsocket(server: any) {
       const data = await redisClient.hmGet(roomId, [
         "isGameInProgress",
         "users",
+        "isCardsPicked",
       ]);
 
       const isGameInProgress: boolean = JSON.parse(data[0]);
+      const isCardsPicked: boolean = JSON.parse(data[2]);
       const users: User[] = JSON.parse(data[1]);
       const spy = users.find(({ id }) => id === spyId);
 
@@ -261,6 +293,9 @@ export function initWebsocket(server: any) {
 
       if (!isGameInProgress) return;
 
+      clearTimeout(timers[roomId]);
+      clearTimeout(timers[`voting ${roomId}`]);
+
       await redisClient.hSet(roomId, {
         isGameInProgress: JSON.stringify(false),
         isPaused: JSON.stringify(false),
@@ -269,9 +304,17 @@ export function initWebsocket(server: any) {
         users: JSON.stringify(newUsers),
         spy: JSON.stringify(null),
         card: JSON.stringify(null),
+        cardsForRound: JSON.stringify(null),
+        isVoting: JSON.stringify(false),
+        votingTarget: JSON.stringify(null),
+        votingInitiator: JSON.stringify(null),
+        votingStartTime: JSON.stringify(null),
+        votedUsersAmount: 0,
+        isCardsPicked: JSON.stringify(false),
       });
 
-      if (!isVoting) io?.to(roomId).emit("gameAborted", newUsers);
+      if (!isVoting)
+        io?.to(roomId).emit("gameAborted", newUsers, isCardsPicked);
 
       return { users: newUsers, spy };
     };
@@ -591,4 +634,16 @@ async function checkAvatarSize(avatarID: string | string[] | undefined) {
   return data.data.size <= 1048576
     ? `https://i.imgur.com/${avatarID}.png`
     : null;
+}
+
+function pickCardsForRound(cards: PackItem[], amount: number): PackItem[] {
+  const result = new Array(amount);
+  let len = cards.length;
+  const taken = new Array(len);
+  while (amount--) {
+    const x = Math.floor(Math.random() * len);
+    result[amount] = cards[x in taken ? taken[x] : x];
+    taken[x] = --len in taken ? taken[len] : len;
+  }
+  return result;
 }

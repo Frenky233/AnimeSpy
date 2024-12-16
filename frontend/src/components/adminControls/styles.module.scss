@@ -35,4 +35,14 @@
       color: $borderColor;
     }
   }
+
+  &Setting {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    font-size: 20px;
+    color: $borderColor;
+    font-weight: 600;
+  }
 }

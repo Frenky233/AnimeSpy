@@ -1,0 +1,31 @@
+@import "@styles/variables";
+
+.counter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  height: 55px;
+
+  svg {
+    height: 32px;
+    width: 32px;
+  }
+
+  &Value {
+    font-size: 32px;
+    font-weight: 600;
+    color: $borderColor;
+  }
+
+  &Button {
+    border: 2px solid $borderColor;
+    border-radius: 50%;
+  }
+
+  &Up {
+    svg {
+      transform: rotate(180deg);
+    }
+  }
+}

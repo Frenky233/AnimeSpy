@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button/component";
 import { EndGameNotification } from "@/components/endGameNotification/component";
 import clsx from "clsx";
 import { VotingDialog } from "@/components/votingDialog/component";
+import { useSettings } from "./hooks/useSettings";
 
 export default function GamePage({}) {
   const { showCancel, voteType, onCancelVoting, onStartVoting } = useControls();
@@ -27,6 +28,7 @@ export default function GamePage({}) {
     isPaused,
     isSpy,
     card,
+    cardsForRound,
     onSelect,
     onStart,
     onAbort,
@@ -43,6 +45,10 @@ export default function GamePage({}) {
     isLoading,
   } = useGame(onCancelVoting);
   const { onOpenSelect, onCloseSelect, showSelect, packs } = usePackSelect();
+  const { settings } = useSettings({
+    cardsForRound: pack?.items.length ? pack.items.length : 0,
+    minutesPerRound: 10,
+  });
 
   return (
     <>
@@ -78,6 +84,10 @@ export default function GamePage({}) {
               isGameInProgress={isGameInProgress}
               isPaused={isPaused}
               isPackSet={!!pack}
+              settings={{
+                ...settings,
+                cardsMax: pack?.items.length ? pack.items.length : 0,
+              }}
             />
           )}
         </div>
@@ -91,6 +101,7 @@ export default function GamePage({}) {
           />
           <GamePackItemsList
             pack={pack}
+            cardsForRound={cardsForRound}
             voting={voteType === "Card"}
             onStartVote={onStartVote}
             isLoading={isLoading}

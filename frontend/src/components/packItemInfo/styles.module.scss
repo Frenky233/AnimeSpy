@@ -9,10 +9,10 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
+    max-width: 350px;
 
     h3 {
       font-size: 30px;
-      text-wrap: nowrap;
       font-weight: 750;
     }
   }
@@ -26,6 +26,7 @@
   &Img {
     border-radius: 8px;
     border: 2px solid $borderColor;
+    overflow: hidden;
   }
 
   &Url {

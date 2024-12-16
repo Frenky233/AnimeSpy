@@ -3,7 +3,14 @@
 @mixin buttonVariant($bgColor, $bgColorHover) {
   background-color: $bgColor;
   border-color: $bgColor;
-  &:hover {
+  @media screen and (min-width: 766px) {
+    &:hover {
+      background-color: $bgColorHover;
+      border-color: $bgColorHover;
+    }
+  }
+
+  &:active {
     background-color: $bgColorHover;
     border-color: $bgColorHover;
   }
@@ -33,6 +40,20 @@
 
   &Secondary {
     @include buttonVariant($buttonSecondaryColor, $buttonSecondaryColorHover);
+  }
+
+  &Third {
+    background-color: #edf2f4;
+
+    @media screen and (min-width: 766px) {
+      &:hover {
+        background-color: #ccd1d3;
+      }
+    }
+
+    &:active {
+      background-color: #ccd1d3;
+    }
   }
 
   &Push {

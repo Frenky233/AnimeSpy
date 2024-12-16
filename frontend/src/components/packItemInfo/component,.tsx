@@ -2,6 +2,7 @@ import { FC } from "react";
 import styles from "./styles.module.scss";
 import { PackItem } from "@/db/db";
 import LinkIcon from "@/assets/images/linkIcon.svg?react";
+import { SuspenseImage } from "../ui/suspenseImage/component";
 
 type Props = {
   item: PackItem;
@@ -10,11 +11,11 @@ type Props = {
 export const PackItemInfo: FC<Props> = ({ item }) => {
   return (
     <div className={styles.info}>
-      <img
-        className={styles.infoImg}
+      <SuspenseImage
         src={item.posterUrl}
         srcSet={item.poster2xUrl}
         alt="poster"
+        className={styles.infoImg}
       />
       <div className={styles.infoList}>
         <div className={styles.infoTitle}>
